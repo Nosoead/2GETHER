@@ -12,6 +12,8 @@
 
     public class GameManager
     {
+        Player player = new Player();
+        Dungeon dungeon = new Dungeon();
         IOManager ioManager = new IOManager();
 
         public void GameStart()
@@ -59,6 +61,7 @@
 
                 //임시 테스트용
                 case 5:
+                    ioManager.PrintMessage("sdfsdf");
                     ioManager.PrintDebugMessage();
                     break;
             }

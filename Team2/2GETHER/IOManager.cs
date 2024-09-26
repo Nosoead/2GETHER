@@ -31,6 +31,17 @@
             Console.ReadKey();
         }
 
+        public void PrintMessage(string message, bool Clear = true)
+        {
+            if (Clear)
+            {
+                Console.Clear();
+            }
+
+            Console.WriteLine(message);
+            
+        }
+
         public void PrintMessage(string[] messages, bool Clear = true)
         {
             if (Clear)
