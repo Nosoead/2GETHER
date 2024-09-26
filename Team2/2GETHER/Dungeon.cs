@@ -1,13 +1,23 @@
-﻿namespace _2GETHER
+﻿using System.Xml.Linq;
+
+namespace _2GETHER
 {
     public class Dungeon
-    {   
+    { 
+        
+        
         public void CreateMonster()
         {
-            EMonsterName eMonsterName = new EMonsterName();
+            List<EMonsterName> monsterList = new List<EMonsterName>();
             Random random = new Random();
-
-
+            int monstercount = random.Next(1, 5);
+            for(int i = 0; i < monstercount; i++)
+            {
+                int index = random.Next(monsterList.Count);
+                
+                
+            }
+            Console.WriteLine($"{monstercount}마리의 몬스터가 등장했습니다.");
         }
         public void StartBattle()
         {
