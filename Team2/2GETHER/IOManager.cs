@@ -1,6 +1,6 @@
 ﻿namespace _2GETHER
 {
-    class IOManager
+    public class IOManager
     {
 
     }

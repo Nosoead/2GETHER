@@ -1,6 +1,6 @@
 ﻿namespace _2GETHER
 {
-    class Monster
+    public class Monster
     {
 
     }
