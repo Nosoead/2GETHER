@@ -1,0 +1,44 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.16">
+  <diagram name="페이지-1" id="_hUB_PViXzHcdUv27Xc9">
+    <mxGraphModel dx="1562" dy="973" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-63" value="class" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="670" y="260" width="360" height="490" as="geometry">
+            <mxRectangle x="670" y="260" width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-64" value="property" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-63">
+          <mxGeometry y="30" width="360" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-65" value="Constructor" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-63">
+          <mxGeometry y="120" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-66" value="Method1()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-63">
+          <mxGeometry y="230" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-74" value="Method2()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-63">
+          <mxGeometry y="360" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-82" value="class" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="260" y="260" width="360" height="490" as="geometry">
+            <mxRectangle x="670" y="90" width="60" height="30" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-83" value="property&lt;div&gt;이름&lt;/div&gt;&lt;div&gt;나이&lt;/div&gt;&lt;div&gt;종족&lt;/div&gt;&lt;div&gt;...&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-82">
+          <mxGeometry y="30" width="360" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-84" value="Constructor&lt;div&gt;사람만들떄 생성자 어떻게 할지 적기&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-82">
+          <mxGeometry y="120" width="360" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-85" value="Method1()&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-82">
+          <mxGeometry y="230" width="360" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="x8vy7biRGnzYr2GgsHi1-86" value="Method2()" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="x8vy7biRGnzYr2GgsHi1-82">
+          <mxGeometry y="360" width="360" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
