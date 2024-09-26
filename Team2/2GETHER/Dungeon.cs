@@ -1,33 +1,38 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Threading;
+
 
 namespace _2GETHER
 {
+
     public class Dungeon
-    { 
-        
-        
+    {
         public void CreateMonster()
         {
-            List<EMonsterName> monsterList = new List<EMonsterName>();
             Random random = new Random();
-            int monstercount = random.Next(1, 5);
-            for(int i = 0; i < monstercount; i++)
+            int monsterCount = random.Next(1, 5);
+            List<EMonsterName> monsters = new List<EMonsterName>();
+            for (int i = 0; i < monsterCount; i++)
             {
-                int index = random.Next(monsterList.Count);
-                
-                
+                EMonsterName randomMonster = (EMonsterName)random.Next(Enum.GetValues(typeof(EMonsterName)).Length);
+                monsters.Add(randomMonster);
             }
-            Console.WriteLine($"{monstercount}마리의 몬스터가 등장했습니다.");
+            foreach (EMonsterName monster in monsters)
+            {
+                Console.WriteLine(monster);
+            }
         }
         public void StartBattle()
-        {
-            Monster mosnter= new Monster();
-            Player player= new Player();
-            Console.WriteLine($"전투 시작~! 플레이어 정보: 체력({player.hp}), 공격력({player.attack})");
-
-            
-
+        { 
+            Console.WriteLine($"전투 시작~!");
+            CreateMonster();          
         }
-        
-    }
+
+
+    }    
 }
+
+
+
+
+
