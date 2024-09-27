@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-
-
-namespace _2GETHER
+﻿namespace _2GETHER
 {
 
     public class Dungeon
@@ -40,14 +36,35 @@ namespace _2GETHER
 
         public void StartBattle()
         {
-            Console.WriteLine("전투 시작!");
+            int choice;
+            Player player = new Player();
+            Console.WriteLine("전투 시작~!\n\n");
             CreateMonster();
 
             foreach (Monster monster in monsters)
             {
                 Console.WriteLine(monster.GetMonsterInfo());
             }
+            Console.WriteLine("[내정보]");
+            Console.WriteLine($"Lv.{player.level}  {player.name}  ({player.job})");
+            Console.WriteLine($"HP {player.hp}/100");
+            Console.WriteLine("1. 공격\n0. 도망가기\n");
+            Console.WriteLine("원하는 행동을 입력해 주세요.");
+            while (!int.TryParse(Console.ReadLine(), out choice) || (choice < 0 || choice > 1))
+            {
+                Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.\n");
+            }
+            if (choice == 0)
+            {
+                //도망갈때 나오는 대사 입력
+            }
+            else
+            {
+                //플레이어가 공격하는 턴
+            }
+
         }
+
     }
 }
 
