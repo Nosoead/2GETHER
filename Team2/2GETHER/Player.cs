@@ -45,7 +45,7 @@
             maxExp = 100;
             equipedWeapon = false;
             equipedArmor = false;
-        }
+        }        
     }
     public enum EJob { 전사, 궁수, 마법사 }
 }

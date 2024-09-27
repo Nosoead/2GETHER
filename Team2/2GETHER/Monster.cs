@@ -18,9 +18,9 @@
         public string GetMonsterInfo()
         {
             return $"Lv: {level}, {name}, HP: {hp}, ATK: {attack}";
-        }
+        }               
     }
-
+    
     public class Goblin : Monster
     {
         public Goblin() : base("고블린", 1, 50, 10) { }
