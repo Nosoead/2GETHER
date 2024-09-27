@@ -40,17 +40,16 @@
             {
                 monsterMessages[i] = monsters[i].GetMonsterInfo();
             }
-            iomanager.PrintMessage("전투 시작~!\n\n", true);
+            iomanager.PrintMessage("전투 시작~!\n", true);
             iomanager.PrintMessage(monsterMessages, false);
             
-            
-            
-            
-            iomanager.PrintMessage("[내정보]", false);
             string[] str =
-            {
-                $"Lv.{player.level}  {player.name}  ({player.job})",
-                $"HP {player.hp}/100",
+            {   
+                "",
+                "[내정보]",
+                "",
+                $"Lv.{player.Level}  {player.Name}  ({player.Job})",
+                $"HP {player.Hp}/100",
                 "원하는 행동을 입력해 주세요."
             };
             iomanager.PrintMessage(str, false);
