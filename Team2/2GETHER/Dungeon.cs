@@ -1,6 +1,5 @@
 ﻿namespace _2GETHER
 {
-
     public class Dungeon
     {
         private List<Monster> monsters = new List<Monster>();
