@@ -31,7 +31,7 @@
             Console.ReadKey();
         }
 
-        public void PrintMessage(string message, bool Clear = true)
+        public void PrintMessage(string message, bool Clear = false)
         {
             if (Clear)
             {
@@ -42,7 +42,7 @@
             
         }
 
-        public void PrintMessage(string[] messages, bool Clear = true)
+        public void PrintMessage(string[] messages, bool Clear = false)
         {
             if (Clear)
             {
@@ -55,7 +55,7 @@
             }
         }
 
-        public int PrintMessageWithNumberNoSelect(string[] messages, bool Clear = true)
+        public int PrintMessageWithNumberNoSelect(string[] messages, bool Clear = false)
         {
             if (Clear)
             {

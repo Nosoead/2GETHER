@@ -15,6 +15,8 @@
         Player player = new Player();
         Dungeon dungeon = new Dungeon();
         IOManager ioManager = new IOManager();
+        //Dungeon dungeon = new Dungeon(ioManager);
+
 
         public void GameStart()
         {
@@ -86,7 +88,7 @@
 
         public void Dungeon()
         {
-            
+            dungeon.StartBattle(player);
         }
     }
 }
