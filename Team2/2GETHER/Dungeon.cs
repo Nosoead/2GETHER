@@ -13,6 +13,7 @@
                 Monster newMonster = GenerateRandomMonster(random.Next(1, 5));
                 monsters.Add(newMonster);
             }
+
         }
         private Monster GenerateRandomMonster(int monsterType)
         {
@@ -32,28 +33,37 @@
         }
         public void StartBattle(Player player)
         {
-            int choice;
-            
-            iomanager.PrintMessage("전투 시작~!\n\n", true);
-            
             CreateMonster();
-            foreach (Monster monster in monsters)
+            int choice;
+            string[] monsterMessages = new string[monsters.Count];
+            for (int i = 0; i < monsters.Count; i++)
             {
-                Console.WriteLine(monster.GetMonsterInfo());
+                monsterMessages[i] = monsters[i].GetMonsterInfo();
             }
+            iomanager.PrintMessage("전투 시작~!\n\n", true);
+            iomanager.PrintMessage(monsterMessages, false);
+            
+            
+            
+            
             iomanager.PrintMessage("[내정보]", false);
             string[] str =
             {
                 $"Lv.{player.level}  {player.name}  ({player.job})",
                 $"HP {player.hp}/100",
-                "1. 공격\n0. 도망가기\n",
                 "원하는 행동을 입력해 주세요."
             };
             iomanager.PrintMessage(str, false);
-            string[] test = { "행동", "나가기" };
-            int select = iomanager.PrintMessageWithNumberForSelect(test, true);
-            iomanager.PrintMessage(select.ToString(), false);
-            
+
+            string[] atkchoice = {"공격", "도망가기"};
+            iomanager.PrintMessageWithNumberForSelect(atkchoice, false);
+
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                monsterMessages[i] = monsters[i].GetMonsterInfo();
+            }
+            iomanager.PrintMessageWithNumberForSelect(monsterMessages, false);
+
             while (!int.TryParse(Console.ReadLine(), out choice) || (choice < 0 || choice > 1))
             {
                 Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.\n");
