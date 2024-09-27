@@ -6,13 +6,15 @@
         public int Level { get; private set; }
         public double Hp { get; private set; }
         public double Attack { get; private set; }
+
         public Monster()
         {
             Name = "";
             Level = 1;
             Hp = 1;
-            Attack = 10.0;
+            Attack = 10.0;            
         }
+
         public Monster(string name, int level, int hp, double attack)
         {
             Name = name;
@@ -35,6 +37,8 @@
         {
             double previousHp = Hp;
 
+            double damage = player.AttackWithEffects();
+
             Hp -= player.Attack;
 
             string hpInfo;
@@ -49,15 +53,21 @@
                 hpInfo = Hp.ToString();
             }
 
+            string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : "";
+
             string[] monsterDamageTaken = new string[]
             {
                "Battle!!",
                "",
                $"Lv.{player.Level} {player.Name} 의 공격!",
-               $"{Name} 을(를) 맞췄습니다. [ 데미지 : {player.Attack} ]",
+               $"{Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ]",
                "",
                $"Lv.{Level} {Name}",
                $"HP {previousHp} -> {hpInfo}",
+               "",
+               "0. 다음",
+               "",
+               ">>",
                ""
             };           
 

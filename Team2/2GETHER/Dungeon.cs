@@ -4,6 +4,7 @@
     {
         Monster monster = new Monster();
         IOManager iomanager = new IOManager();
+
         private List<Monster> monsters = new List<Monster>();
         public void CreateMonster()
         {
@@ -18,6 +19,7 @@
 
 
         }
+        
         private Monster GenerateRandomMonster(int monsterType)
         {
             switch (monsterType)
@@ -39,12 +41,16 @@
             int count = 0;
             CreateMonster();
             int select;
+
             string[] monsterMessages = new string[monsters.Count];
+
             for (int i = 0; i < monsters.Count; i++)
             {
                 monsterMessages[i] = monsters[i].GetMonsterInfo();
             }
-            iomanager.PrintMessage("전투 시작~!\n", true);
+
+            iomanager.PrintMessage("전투시작!\n", true);
+
             iomanager.PrintMessage(monsterMessages, false);
 
             string[] battleInfo =
