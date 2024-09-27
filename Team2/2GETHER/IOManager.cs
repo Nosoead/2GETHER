@@ -1,6 +1,6 @@
 ﻿namespace _2GETHER
 {
-    public class IOManager
+    class IOManager
     {
         public string inputString = "";
 
@@ -31,6 +31,41 @@
             Console.ReadKey();
         }
 
+        public void PrintConsoleLine()
+        {
+            Console.WriteLine();
+        }
+
+        public int PrintMessageAndSelectNum(string message, int maxNumber)
+        {
+            int select = -1;
+
+            while (true)
+            {
+                Console.WriteLine($"{message}");
+
+                try
+                {
+                    select = int.Parse(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    //Console.WriteLine("{0}", message);
+                }
+
+                if ((0 <= select && select <= maxNumber))
+                {
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            return select;
+        }
+
         public void PrintMessage(string message, bool Clear = false)
         {
             if (Clear)
@@ -39,7 +74,7 @@
             }
 
             Console.WriteLine(message);
-            
+             Console.WriteLine("잘못된 입력입니다\n");
         }
 
         public void PrintMessage(string[] messages, bool Clear = false)
@@ -55,20 +90,17 @@
             }
         }
 
-        public int PrintMessageWithNumberNoSelect(string[] messages, bool Clear = false)
+        public void PrintMessageWithNumberNoSelect(string[] messages, bool Clear = false)
         {
             if (Clear)
             {
                 Console.Clear();
             }
 
-            while (true)
+            for (int i = 0; i < messages.Length; i++)
             {
-                for (int i = 0; i < messages.Length; i++)
-                {
-                    string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
-                    Console.WriteLine(printMessage);
-                }
+                string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
+                Console.WriteLine(printMessage);
             }
         }
 
@@ -101,7 +133,52 @@
                     Console.WriteLine("잘못된 입력입니다\n");
                 }
 
-                if (!(0 < selectNumber && selectNumber <= messages.Length))
+                if (!(0 <= selectNumber && selectNumber <= messages.Length))
+                {
+                    selectNumber = -1;
+                    Console.WriteLine("\n잘못된 숫자 입력입니다\n");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return selectNumber;
+        }
+
+        public int PrintMessageWithNumberForSelectZeroExit(string[] messages, bool Clear = true)
+        {
+            int selectNumber = 0;
+
+            if (Clear)
+            {
+                Console.Clear();
+            }
+
+            while (true)
+            {
+                for (int i = 0; i < messages.Length; i++)
+                {
+                    string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
+                    Console.WriteLine(printMessage);
+                }
+
+                Console.WriteLine("\n0. 취소/나가기");
+
+                Console.WriteLine("\n원하는 행동을 입력해주세요 : \n");
+
+                try
+                {
+                    selectNumber = int.Parse(Console.ReadLine());
+                }
+                catch (Exception ex)
+                {
+                    //Console.Write(ex.ToString());
+                    Console.WriteLine("잘못된 입력입니다\n");
+                }
+
+                if (!(0 <= selectNumber && selectNumber <= messages.Length))
                 {
                     selectNumber = -1;
                     Console.WriteLine("\n잘못된 숫자 입력입니다\n");
