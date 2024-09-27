@@ -6,7 +6,13 @@
         public int Level { get; private set; }
         public double Hp { get; private set; }
         public double Attack { get; private set; }
-
+        public Monster()
+        {
+            Name = "";
+            Level = 1;
+            Hp = 1;
+            Attack = 10.0;
+        }
         public Monster(string name, int level, int hp, double attack)
         {
             Name = name;
