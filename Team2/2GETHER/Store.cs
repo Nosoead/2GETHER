@@ -187,7 +187,7 @@ namespace _2GETHER
                 "상점",
                 "필요한 아이템을 얻을 수 있는 상점입니다.\n",
                 "[보유 골드]",
-                $"{player.gold} G\n",
+                $"{player.Gold} G\n",
                 "[아이템 목록]"
             };
             return storeList.ToArray();
