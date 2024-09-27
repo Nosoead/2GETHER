@@ -1,6 +1,6 @@
 ﻿namespace _2GETHER
 {
-    public class Dungeon
+    class Dungeon
     {
         private List<Monster> monsters = new List<Monster>();
 
@@ -45,8 +45,8 @@
                 Console.WriteLine(monster.GetMonsterInfo());
             }
             Console.WriteLine("[내정보]");
-            Console.WriteLine($"Lv.{player.level}  {player.name}  ({player.job})");
-            Console.WriteLine($"HP {player.hp}/100");
+            Console.WriteLine($"Lv.{player.Level}  {player.Name}  ({player.Job})");
+            Console.WriteLine($"HP {player.Hp}/100");
             Console.WriteLine("1. 공격\n0. 도망가기\n");
             Console.WriteLine("원하는 행동을 입력해 주세요.");
             while (!int.TryParse(Console.ReadLine(), out choice) || (choice < 0 || choice > 1))
