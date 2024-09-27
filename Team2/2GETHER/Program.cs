@@ -14,9 +14,7 @@
     {
         Player player = new Player();
         Dungeon dungeon = new Dungeon();
-        IOManager ioManager = new IOManager();
-        //Dungeon dungeon = new Dungeon(ioManager);
-
+        IOManager ioManager = new IOManager();       
 
         public void GameStart()
         {
