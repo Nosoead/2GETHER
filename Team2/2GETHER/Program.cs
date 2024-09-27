@@ -16,8 +16,10 @@
         Dungeon dungeon = new Dungeon();
         IOManager ioManager = new IOManager();
         //Dungeon dungeon = new Dungeon(ioManager);
-
-
+        Store store = new Store();
+        Inventory inventory = new Inventory();
+        ItemManager itemManager = new ItemManager();
+        //장작관련 정보 - 플레이어랑 연결 //Inven-> add/remove 
         public void GameStart()
         {
             ioManager.PrintMessage(ioManager.GameStartSceneMessage);
@@ -78,17 +80,17 @@
 
         public void Inventory()
         {
-
+            inventory.EnterInventory(player, ioManager, itemManager);
         }
 
         public void Store()
         {
-
+            store.EnterStore(player, ioManager, itemManager);
         }
 
         public void Dungeon()
         {
-            dungeon.StartBattle(player);
+            //dungeon.StartBattle(player);
         }
     }
 }
