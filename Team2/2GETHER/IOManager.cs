@@ -1,6 +1,6 @@
 ﻿namespace _2GETHER
 {
-    public class IOManager
+    class IOManager
     {
         public string inputString = "";
 

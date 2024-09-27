@@ -1,6 +1,6 @@
 ﻿namespace _2GETHER
 {
-    public class Dungeon
+    class Dungeon
     {
         IOManager iomanager = new IOManager();
         private List<Monster> monsters = new List<Monster>();
