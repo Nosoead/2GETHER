@@ -74,7 +74,6 @@
             }
 
             Console.WriteLine(message);
-             Console.WriteLine("잘못된 입력입니다\n");
         }
 
         public void PrintMessage(string[] messages, bool Clear = false)
