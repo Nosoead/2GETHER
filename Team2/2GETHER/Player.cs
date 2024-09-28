@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace _2GETHER
+﻿namespace _2GETHER
 {
     class Player
     {
@@ -74,10 +72,7 @@ namespace _2GETHER
             return damage;
         }
 
-        
-
-
-        public string PlayerDamageTaken(Monster monster)
+        public void PlayerDamageTaken(Monster monster)
         {
             double previousHp = Hp;
 
@@ -94,25 +89,7 @@ namespace _2GETHER
             {
                 hpInfo = Hp.ToString();
             }
-
-            string[] monsterDamageTaken = new string[]
-            {
-               "Battle!!",
-                "",
-                $"Lv.{monster.Level} {monster.Name} 의 공격!",
-               $"{Name} 을(를) 맞췄습니다. [ 데미지 : {monster.Attack} ]",
-               "",
-               $"Lv.{Level} {Name}",
-               $"HP {previousHp} -> {hpInfo}",
-               "",
-               "0. 다음",
-               "",
-               ">>",
-               ""
-            };
-
-            return string.Join("\n", monsterDamageTaken);
-        }
+        }        
 
         public Item[] WeaponEquipment = new Item[1];
         public Item[] ArmorEquipment = new Item[1];

@@ -7,6 +7,8 @@
         public double Hp { get; private set; }
         public double Attack { get; private set; }
 
+        private List<Monster> monsters = new List<Monster>();
+
         public Monster()
         {
             Name = "";
@@ -33,7 +35,7 @@
 
         }
 
-        public string MonsterDamageTaken(Player player)
+        public void MonsterDamageTaken(Player player)
         {
             double previousHp = Hp;
 
@@ -53,25 +55,37 @@
                 hpInfo = Hp.ToString();
             }
 
-            string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : "";
+            string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : ""; 
+            
+        }
 
-            string[] monsterDamageTaken = new string[]
+        public void CreateMonster()
+        {
+            monsters.Clear();
+            Random random = new Random();
+            int monsterCount = random.Next(1, 5);
+            for (int i = 0; i < monsterCount; i++)
             {
-               "Battle!!",
-               "",
-               $"Lv.{player.Level} {player.Name} 의 공격!",
-               $"{Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ]",
-               "",
-               $"Lv.{Level} {Name}",
-               $"HP {previousHp} -> {hpInfo}",
-               "",
-               "0. 다음",
-               "",
-               ">>",
-               ""
-            };           
+                Monster newMonster = GenerateRandomMonster(random.Next(1, 5));
+                monsters.Add(newMonster);
+            }
+        }
 
-            return string.Join("\n", monsterDamageTaken);
+        private Monster GenerateRandomMonster(int monsterType)
+        {
+            switch (monsterType)
+            {
+                case 1:
+                    return new Goblin();
+                case 2:
+                    return new Oak();
+                case 3:
+                    return new Ooger();
+                case 4:
+                    return new GoblinKing();
+                default:
+                    throw new ArgumentException("유효하지 않은 몬스터 타입입니다.");
+            }
         }
     }
 
