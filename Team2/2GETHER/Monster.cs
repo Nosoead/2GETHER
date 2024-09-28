@@ -7,14 +7,14 @@
         public double Hp { get; private set; }
         public double Attack { get; private set; }
 
-        private List<Monster> monsters = new List<Monster>();
+        public List<Monster> monsters = new List<Monster>();
 
         public Monster()
         {
             Name = "";
             Level = 1;
             Hp = 1;
-            Attack = 10.0;            
+            Attack = 10.0;
         }
 
         public Monster(string name, int level, int hp, double attack)
@@ -35,28 +35,14 @@
 
         }
 
-        public void MonsterDamageTaken(Player player)
+        public void MonsterDamageTaken(double damage)
         {
-            double previousHp = Hp;
+            Hp -= damage;
 
-            double damage = player.AttackWithEffects();
-
-            Hp -= player.Attack;
-
-            string hpInfo;
-
-            if (Hp <= 0)
+            if (Hp < 0)
             {
                 Hp = 0;
-                hpInfo = "Dead";
             }
-            else
-            {
-                hpInfo = Hp.ToString();
-            }
-
-            string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : ""; 
-            
         }
 
         public void CreateMonster()

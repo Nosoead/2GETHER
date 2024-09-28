@@ -4,18 +4,18 @@
     {
         public string Name { get; private set; }
         public int Level { get; private set; }
-        public double Attack{ get; private set; }
-        public double Defense{ get; private set; }
-        public double Hp{ get; private set; }
-        public double MaxHp{ get; private set; }
+        public double Attack { get; private set; }
+        public double Defense { get; private set; }
+        public double Hp { get; private set; }
+        public double MaxHp { get; private set; }
         public double Mp { get; private set; }
         public double MaxMp { get; private set; }
-        public int Gold{ get; private set; }
-        public int Exp{ get; private set; }
-        public int MaxExp{ get; private set; }
-        public EJob Job{ get; private set; }
-        public bool EquippedWeapon{ get; private set; }
-        public bool EquippedArmor{ get; private set; }
+        public int Gold { get; private set; }
+        public int Exp { get; private set; }
+        public int MaxExp { get; private set; }
+        public EJob Job { get; private set; }
+        public bool EquippedWeapon { get; private set; }
+        public bool EquippedArmor { get; private set; }
 
         private Random random = new Random();
 
@@ -74,22 +74,10 @@
 
         public void PlayerDamageTaken(Monster monster)
         {
-            double previousHp = Hp;
+            double damage = AttackWithEffects();
 
             Hp -= monster.Attack;
-
-            string hpInfo;
-
-            if (Hp <= 0)
-            {
-                Hp = 0;
-                hpInfo = "Dead";
-            }
-            else
-            {
-                hpInfo = Hp.ToString();
-            }
-        }        
+        }
 
         public Item[] WeaponEquipment = new Item[1];
         public Item[] ArmorEquipment = new Item[1];
