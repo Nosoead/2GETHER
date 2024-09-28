@@ -2,99 +2,116 @@
 {
     class Dungeon
     {
-        Monster monster = new Monster();
-        IOManager iomanager = new IOManager();
 
-        private List<Monster> monsters = new List<Monster>();
-        public void CreateMonster()
+        public string[] PlayerTurn(Player player, Monster monster, int selectNum)
         {
-            monsters.Clear();
-            Random random = new Random();
-            int monsterCount = random.Next(1, 5);
-            for (int i = 0; i < monsterCount; i++)
+            double damage = player.AttackWithEffects();
+
+            double previousHp = monster.Hp;
+
+            monster.MonsterDamageTaken(damage);
+
+            string hpInfo = (monster.Hp == 0) ? "Dead" : monster.Hp.ToString();
+
+            string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : "";
+            string attackMessage = (damage == 0)
+             ? $"{monster.monsters[selectNum].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
+             : $"{monster.monsters[selectNum].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
+
+            string[] playerTurn = new string[]
             {
-                Monster newMonster = GenerateRandomMonster(random.Next(1, 5));
-                monsters.Add(newMonster);
-            }
+                "Battle!!",
+                "",
+                 $"Lv.{player.Level} {player.Name} 의 공격!",
+                 attackMessage,
+                "",
+                $"Lv.{monster.monsters[selectNum].Level} {monster.monsters[selectNum].Name}",
+                $"HP {previousHp} -> {hpInfo}",
+                "",
+                "0. 다음",
+                "",
+                ">>",
+                ""
+            };
+            return playerTurn;
+        }
 
 
-        }
-        
-        private Monster GenerateRandomMonster(int monsterType)
+
+
+        public void StartBattle(Player player, Monster monster, IOManager ioManager)
         {
-            switch (monsterType)
-            {
-                case 1:
-                    return new Goblin();
-                case 2:
-                    return new Oak();
-                case 3:
-                    return new Ooger();
-                case 4:
-                    return new GoblinKing();
-                default:
-                    throw new ArgumentException("유효하지 않은 몬스터 타입입니다.");
-            }
-        }
-        public void StartBattle(Player player)
-        {
+            monster.CreateMonster();
+
             int count = 0;
-            CreateMonster();
             int select;
-
-            string[] monsterMessages = new string[monsters.Count];
-
-            for (int i = 0; i < monsters.Count; i++)
+            string[] randomMonsters = new string[monster.monsters.Count];
+            for (int i = 0; i < monster.monsters.Count; i++)
             {
-                monsterMessages[i] = monsters[i].GetMonsterInfo();
+                randomMonsters[i] = monster.monsters[i].GetMonsterInfo();
             }
 
-            iomanager.PrintMessage("전투시작!\n", true);
-
-            iomanager.PrintMessage(monsterMessages, false);
+            ioManager.PrintMessage("전투시작!\n", true);
+            ioManager.PrintMessage(randomMonsters, false);
 
             string[] battleInfo =
             {
-                "",
-                "[내정보]",
-                "",
+                "\n[내정보]\n",
                 $"Lv.{player.Level}  {player.Name}  ({player.Job})",
-                $"HP {player.Hp}/100"
+                $"HP {player.Hp}/100\n"
             };
-            iomanager.PrintMessage(battleInfo, false);
+            ioManager.PrintMessage(battleInfo, false);
 
             string[] atkchoice = { "공격", "도망가기" };
-            select = iomanager.PrintMessageWithNumberForSelect(atkchoice, false);
+            select = ioManager.PrintMessageWithNumberForSelect(atkchoice, false);
             if (select == 2)
             {
                 return;
             }
-            select = iomanager.PrintMessageWithNumberForSelect(monsterMessages, true);
 
-            while (player.Hp > 0 && monsters.Count > 0)
+            while (player.Hp > 0 && monster.monsters.Count > 0)
             {
                 if (count % 2 == 0)
                 {
-                    iomanager.PrintMessage(monsters[select - 1].MonsterDamageTaken(player));
-                    Console.WriteLine("0. 취소");
+                    select = ioManager.PrintMessageWithNumberForSelect(randomMonsters, true);
+                    ioManager.PrintMessage(battleInfo, false);
+                    ioManager.PrintMessage(PlayerTurn(player, monster, select-1), false);
+
+                    ioManager.PrintMessage("0. 취소");
                     Console.ReadKey();
+
+                    int monstersDefeated = 0;
+                    if (monster.monsters[select - 1].Hp <= 0)
+                    {
+                        ioManager.PrintMessage($"몬스터 {monster.monsters[select - 1].Name}를 처치했습니다.", false);
+                        monstersDefeated++;
+                        monster.monsters.RemoveAt(select - 1);
+                    }
+                    if (monster.monsters.Count == 0)
+                    {
+                        ioManager.PrintMessage($"던전에서 몬스터 {monstersDefeated}마리를 잡았습니다.\n", false);
+                        ioManager.PrintMessage(battleInfo, false);
+                    }
                 }
                 else
                 {
-                    Console.Clear();
-                    for (int i = 0; i < monsters.Count; i++)
+                    for (int i = 0; i < monster.monsters.Count; i++)
                     {
-                        iomanager.PrintMessage(player.PlayerDamageTaken(monsters[i]));
+                        Console.Clear();
+                        ioManager.PrintMessage(PlayerTurn(player, monster, select -1), true);
+                        Console.ReadKey();
                     }
-                    Console.ReadKey();
                 }
                 count++;
             }
-
-
-
-
-
+            if (player.Hp <= 0)
+            {
+                // 플레이어가 죽은 상태 표시
+            }
+            else if (monster.monsters.Count == 0)
+            {
+                // 전투승리 표시
+            }
         }
     }
 }
