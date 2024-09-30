@@ -51,6 +51,7 @@
                 catch (Exception ex)
                 {
                     //Console.WriteLine("{0}", message);
+                    continue;
                 }
 
                 if ((0 <= select && select <= maxNumber))
@@ -130,6 +131,7 @@
                 {
                     //Console.Write(ex.ToString());
                     Console.WriteLine("잘못된 입력입니다\n");
+                    continue;
                 }
 
                 if (!(0 <= selectNumber && selectNumber <= messages.Length))
@@ -175,6 +177,7 @@
                 {
                     //Console.Write(ex.ToString());
                     Console.WriteLine("잘못된 입력입니다\n");
+                    continue;
                 }
 
                 if (!(0 <= selectNumber && selectNumber <= messages.Length))
