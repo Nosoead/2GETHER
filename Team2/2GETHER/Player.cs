@@ -31,7 +31,7 @@
             MaxHp = 100;
             Mp = 50;
             MaxMp = 50;
-            Gold = 0;
+            Gold = 5000;
             Exp = 0;
             MaxExp = 100;
             Job = EJob.전사;
@@ -221,6 +221,17 @@
         public Item[] WeaponEquipment = new Item[1];
         public Item[] ArmorEquipment = new Item[1];
         public List<Item> InventoryItems = new List<Item>();
+
+        public int Buy(Item item)
+        {
+            Gold -= item.price;
+            return Gold;
+        }
+        public int Sell(Item item)
+        {
+            Gold += item.price*85/100;
+            return Gold;
+        }
     }
 
     public enum EJob { 전사, 궁수, 마법사 }
