@@ -39,10 +39,7 @@
         {
             Hp -= damage;
 
-            if (Hp < 0)
-            {
-                Hp = 0;
-            }
+            if (Hp < 0) Hp = 0;
         }
 
         public void CreateMonster()
@@ -52,12 +49,12 @@
             int monsterCount = random.Next(1, 5);
             for (int i = 0; i < monsterCount; i++)
             {
-                Monster newMonster = GenerateRandomMonster(random.Next(1, 5));
-                monsters.Add(newMonster);
+                Monster addMonster = RandomMonster(random.Next(1, 5));
+                monsters.Add(addMonster);
             }
         }
 
-        private Monster GenerateRandomMonster(int monsterType)
+        private Monster RandomMonster(int monsterType)
         {
             switch (monsterType)
             {
