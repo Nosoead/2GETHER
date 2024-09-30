@@ -19,6 +19,12 @@ namespace _2GETHER
         Weapon
     }
 
+    public enum EItemDo
+    {
+        ItemBuy,
+        ItemSell,
+        ItemView
+    }
     class Item
     {
         public EItem eItem;
@@ -44,25 +50,35 @@ namespace _2GETHER
             this.itemDescription = itemDescription;
         }
 
-        public string GetitemInfo(bool isStore) //bool isItemTag store or inventory
+        public string GetitemInfo(EItemDo eItemDo) //bool isItemTag store or inventory
         {
             string iteminfo = "";
-            if (isStore)
+
+            switch (eItemDo)
             {
-                iteminfo =
-                      (isPlayerEquip ? "[E] " : "")
-                    + ($"{eItem}")
-                    + (isArmor ? $"| 방어력 + {itemDEF}" : $"| 공격력 + {itemATK}")
-                    + $"| {itemDescription}"
-                    + (isPlayerBuy ? "| 구매완료" : $"| {price} G");
-            }
-            else
-            {
-                iteminfo =
-                      (isPlayerEquip ? "[E] " : "")
-                    + ($"{eItem}")
-                    + (isArmor ? $"| 방어력 + {itemDEF}" : $"| 공격력 + {itemATK}")
-                    + $"| {itemDescription}";
+                case EItemDo.ItemBuy:
+                    iteminfo =
+                          (isPlayerEquip ? "[E] " : "")
+                        + ($"{eItem}")
+                        + (isArmor ? $"| 방어력 + {itemDEF}" : $"| 공격력 + {itemATK}")
+                        + $"| {itemDescription}"
+                        + (isPlayerBuy ? "| 구매완료" : $"| {price} G");
+                    break;
+                case EItemDo.ItemSell:
+                    iteminfo =
+                          (isPlayerEquip ? "[E] " : "")
+                        + ($"{eItem}")
+                        + (isArmor ? $"| 방어력 + {itemDEF}" : $"| 공격력 + {itemATK}")
+                        + $"| {itemDescription}"
+                        + (isPlayerBuy ? $"| {price * 85 / 100} G" : "");
+                    break;
+                case EItemDo.ItemView:
+                    iteminfo =
+                          (isPlayerEquip ? "[E] " : "")
+                        + ($"{eItem}")
+                        + (isArmor ? $"| 방어력 + {itemDEF}" : $"| 공격력 + {itemATK}")
+                        + $"| {itemDescription}";
+                    break;
             }
             return iteminfo;
         }
@@ -162,19 +178,19 @@ namespace _2GETHER
                 //그냥 상점창
                 if (selectNumber == -1)
                 {
-                    ioManager.PrintMessageWithNumberNoSelect(GetStoreItemList(itemManager), false);
-                    selectNumber = ioManager.PrintMessageWithNumberForSelect(ShowStoreMenu(), false);
+                    ioManager.PrintMessage(GetStoreItemList(itemManager), false);
+                    selectNumber = ioManager.PrintMessageWithNumberForSelectZeroExit(ShowStoreMenu(), false);
                 }
                 //구매하기 상점창
                 else if (selectNumber == 1)
                 {
-                    inputNum = ioManager.PrintMessageWithNumberForSelect(GetStoreItemList(itemManager), false);
-                    selectNumber = ItemPurchase(inputNum, player, itemManager);
+                    inputNum = ioManager.PrintMessageWithNumberForSelectZeroExit(GetStoreItemList(itemManager), false);
+                    selectNumber = ItemBuy(inputNum, player, itemManager);
                 }
                 else if (selectNumber == 2)
                 {
-                    inputNum = ioManager.PrintMessageWithNumberForSelect(GetInventoryItemList(player), false);
-                    selectNumber = ItemSale(inputNum, player, itemManager);
+                    inputNum = ioManager.PrintMessageWithNumberForSelectZeroExit(GetInventoryItemList(player), false);
+                    selectNumber = ItemSell(inputNum, player, itemManager);
                 }
             }
             while (selectNumber != 0);
@@ -198,8 +214,7 @@ namespace _2GETHER
             List<string> menuList = new List<string>()
             {
                 "아이템 구매",
-                "아이템 판매",
-                "나가기"
+                "아이템 판매"
             };
             return menuList.ToArray();
         }
@@ -209,7 +224,7 @@ namespace _2GETHER
             List<string> storeItemList = new List<string>();
             foreach (var item in itemManager.items)
             {
-                storeItemList.Add(item.GetitemInfo(true));
+                storeItemList.Add(item.GetitemInfo(EItemDo.ItemBuy));
             }
             return storeItemList.ToArray();
         }
@@ -219,20 +234,26 @@ namespace _2GETHER
             List<string> inventoryItemList = new List<string>();
             foreach (var item in player.InventoryItems)
             {
-                inventoryItemList.Add(item.GetitemInfo(true));
+                inventoryItemList.Add(item.GetitemInfo(EItemDo.ItemSell));
             }
             return inventoryItemList.ToArray();
         }
-        public int ItemPurchase(int inputNum, Player player, ItemManager itemManager)
+        public int ItemBuy(int inputNum, Player player, ItemManager itemManager)
         {
             if (inputNum == 0) return -1;
             else
             {
                 Item selectItem = itemManager.items[inputNum - 1];
-                if (!selectItem.isPlayerBuy)
+                if (!selectItem.isPlayerBuy && selectItem.price <= player.Gold)
                 {
                     selectItem.isPlayerBuy = true;
+                    player.Buy(selectItem);
                     player.InventoryItems.Add(selectItem);
+                }
+                else if (!selectItem.isPlayerBuy && selectItem.price > player.Gold)
+                {
+                    Console.WriteLine("\n돈이 모자랍니다.\n아무 키나 입력해주세요");
+                    Console.ReadKey();
                 }
                 else
                 {
@@ -243,19 +264,27 @@ namespace _2GETHER
             return 1;
         }
 
-        public int ItemSale(int inputNum, Player player, ItemManager itemManager)
+        public int ItemSell(int inputNum, Player player, ItemManager itemManager)
         {
             if (inputNum == 0) return -1;
             else
             {
                 Item selectItem = player.InventoryItems[inputNum - 1];
-                for (int i = 0; i < itemManager.items.Count; i++)
+                if (!selectItem.isPlayerEquip)
                 {
-                    if (itemManager.items[i].eItem == selectItem.eItem)
-                    { itemManager.items[i].isPlayerBuy = false; }
+                    for (int i = 0; i < itemManager.items.Count; i++)
+                    {
+                        if (itemManager.items[i].eItem == selectItem.eItem)
+                        { itemManager.items[i].isPlayerBuy = false; }
+                    }
+                    player.Sell(selectItem);
+                    player.InventoryItems.Remove(selectItem);
                 }
-                player.InventoryItems.Remove(selectItem);
-
+                else
+                {
+                    Console.WriteLine("\n장착 아이템은 판매할 수 없습니다.\n아무 키나 입력해주세요");
+                    Console.ReadKey();
+                }
             }
             return 2;
         }
@@ -273,13 +302,13 @@ namespace _2GETHER
                 //그냥 상점창
                 if (selectNumber == -1)
                 {
-                    ioManager.PrintMessageWithNumberNoSelect(GetInventoryItemList(player), false);
-                    selectNumber = ioManager.PrintMessageWithNumberForSelect(ShowInventoryMenu(), false);
+                    ioManager.PrintMessage(GetInventoryItemList(player), false);
+                    selectNumber = ioManager.PrintMessageWithNumberForSelectZeroExit(ShowInventoryMenu(), false);
                 }
                 //구매하기 상점창
                 else if (selectNumber == 1)
                 {
-                    inputNum = ioManager.PrintMessageWithNumberForSelect(GetInventoryItemList(player), false);
+                    inputNum = ioManager.PrintMessageWithNumberForSelectZeroExit(GetInventoryItemList(player), false);
                     selectNumber = ItemEquipment(inputNum, player, itemManager);
                 }
             }
@@ -300,8 +329,7 @@ namespace _2GETHER
         {
             List<string> menuList = new List<string>()
             {
-                "장착 관리",
-                "나가기"
+                "장착 관리"
             };
             return menuList.ToArray();
         }
@@ -310,7 +338,7 @@ namespace _2GETHER
             List<string> inventoryItemList = new List<string>();
             foreach (var item in player.InventoryItems)
             {
-                inventoryItemList.Add(item.GetitemInfo(false));
+                inventoryItemList.Add(item.GetitemInfo(EItemDo.ItemView));
             }
             return inventoryItemList.ToArray();
         }
