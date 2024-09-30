@@ -74,11 +74,18 @@
             return damage;
         }
 
-        public void PlayerDamageTaken(Monster monster)
+        public void PlayerAttack(Monster monster)
         {
             double damage = AttackWithEffects();
 
+            monster.MonsterDamageTaken(damage);
+        }
+
+        public void PlayerDamageTaken(Monster monster)
+        {
             Hp -= monster.Attack;
+
+            if (Hp < 0) Hp = 0;
         }
 
         public void UseSkillOne(Monster monster)
