@@ -1,41 +1,53 @@
-﻿namespace _2GETHER
+﻿using System.Threading;
+
+namespace _2GETHER
 {
     class Dungeon
     {
-        //public void PrintMonsterStatus(Monster monster, IOManager ioManager)
-        //{
-        //    string[] monsterStatus = monster.monsters
-        //        .Select(m => $"Lv. {m.Level} {m.Name} {(m.Hp == 0 ? "Dead" : $"HP {m.Hp}")}")
-        //        .ToArray();
-
-        //    ioManager.PrintMessage(monsterStatus, false);
-        //}
-
-        public string[] PlayerTurn(Player player, Monster monster, int selectNum)
+       
+        public string[] PlayerTurn(Player player, Monster monster, int monSelect, int skillSelect, bool isSkillUsed = false )
         {
-            if (monster.monsters[selectNum].Hp == 0)
+            if (monster.monsters[monSelect].Hp <= 0)
             {
                 return new string[]
                 {
-                    $"{monster.monsters[selectNum].Name} 은(는) 이미 처치되었습니다!",
+                    "전투!!",
                     "",
-                    "0. 다음",
+                    $"{monster.monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
+                    "",
                     ">>",
                     ""
                 };
             }
-            double damage = player.AttackWithEffects();
 
-            double previousHp = monster.monsters[selectNum].Hp;
 
-            monster.monsters[selectNum].MonsterDamageTaken(damage);
+            double previousHp = monster.monsters[monSelect].Hp;
 
-            string hpInfo = (monster.monsters[selectNum].Hp == 0) ? "Dead" : monster.monsters[selectNum].Hp.ToString();
+            double damage=0;
+                
+            if (isSkillUsed && skillSelect == 1)
+            {
+                damage = player.UseSkillOne(monster.monsters[monSelect]);
+            }
+            else if(isSkillUsed && skillSelect == 2)
+            {
+                damage = player.UseSkillTwo(monster.monsters);
+            }
+            else
+            {
+                damage = player.AttackWithEffects();
+                player.PlayerAttack(monster.monsters[monSelect]);
+            }
 
-            string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : "";
+            string hpInfo = (monster.monsters[monSelect].Hp == 0) ? "Dead" : monster.monsters[monSelect].Hp.ToString();
+
+            string criticalHitMessage = (damage > player.Attack && damage < player.Attack * 2) ? "치명타 공격!!" : "";
+
+
             string attackMessage = (damage == 0)
-             ? $"{monster.monsters[selectNum].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
-             : $"{monster.monsters[selectNum].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
+             ? $"{monster.monsters[monSelect].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
+             : $"{monster.monsters[monSelect].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
+
 
             string[] playerTurn = new string[]
             {
@@ -44,7 +56,7 @@
                 $"Lv.{player.Level} {player.Name} 의 공격!",
                 attackMessage,
                 "",
-                $"Lv.{monster.monsters[selectNum].Level} {monster.monsters[selectNum].Name}",
+                $"Lv.{monster.monsters[monSelect].Level} {monster.monsters[monSelect].Name}",
                 $"HP {previousHp} -> {hpInfo}",
                 "",
                 "",
@@ -53,9 +65,9 @@
             };
             return playerTurn;
         }
-        public string[] MonsterTurn(Player player, Monster monster, int selectNum)
+        public string[] MonsterTurn(Player player, Monster monster, int i)
         {
-            double damage = monster.monsters[selectNum].Attack;
+            double damage = monster.monsters[i].Attack;
 
             double previousHp = player.Hp;
 
@@ -67,7 +79,7 @@
             {
                 "Battle!!",
                 "",
-                $"Lv.{monster.monsters[selectNum].Level} {monster.monsters[selectNum].Name} 의 공격!",
+                $"Lv.{monster.monsters[i].Level} {monster.monsters[i].Name} 의 공격!",
                 "",
                 $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {damage} ]",
                 $"HP {previousHp} ->{currentHp}",
@@ -85,31 +97,28 @@
             monster.CreateMonster();
 
             int count = 0;
-            int select;
+            
+            int monSelect;
+            int atkSelect;
+            int skillSelect =0;
 
-            string[] randomMonsters = new string[monster.monsters.Count];
+            string[] randomMonstersInfo = new string[monster.monsters.Count];
             for (int i = 0; i < monster.monsters.Count; i++)
             {
-                randomMonsters[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} HP {monster.monsters[i].Hp}";
+                randomMonstersInfo[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} HP {monster.monsters[i].Hp}";
             }
 
             ioManager.PrintMessage("전투시작!\n", true);
-            ioManager.PrintMessage(randomMonsters, false);
+            ioManager.PrintMessage(randomMonstersInfo, false);
 
             string[] battleInfo =
             {
                 "\n[내정보]\n",
                 $"Lv.{player.Level}  {player.Name}  ({player.Job})",
-                $"HP {player.Hp}/{player.MaxHp}\n"
+                $"HP {player.Hp}/{player.MaxHp}",
+                $"MP {player.Mp}/{player.MaxMp}\n"
             };
             ioManager.PrintMessage(battleInfo, false);
-
-            string[] atkchoice = { "공격", "도망가기" };
-            select = ioManager.PrintMessageWithNumberForSelect(atkchoice, false);
-            if (select == 2)
-            {
-                return;
-            }
 
             while (player.Hp > 0 && monster.monsters.Count > 0)
             {
@@ -117,35 +126,54 @@
                 {
                     "\n[내정보]\n",
                     $"Lv.{player.Level}  {player.Name}  ({player.Job})",
-                    $"HP {player.Hp}/{player.MaxHp}\n"
+                    $"HP {player.Hp}/{player.MaxHp}",
+                    $"MP {player.Mp}/{player.MaxMp}\n"
                 };
-                ioManager.PrintMessage(battleInfo, false);
+
+
                 for (int i = 0; i < monster.monsters.Count; i++)
                 {
                     string monsterStatus = monster.monsters[i].Hp == 0 ? "Dead" : $"HP {monster.monsters[i].Hp}";
-                    randomMonsters[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} {monsterStatus}";
+                    randomMonstersInfo[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} {monsterStatus}";
                 }
                 if (count % 2 == 0)
                 {
-                    select = ioManager.PrintMessageWithNumberForSelect(randomMonsters, true);
+                    string[] atkChoice = { "공격", "스킬" };
+                    atkSelect = ioManager.PrintMessageWithNumberForSelect(atkChoice, false);
 
-                    ioManager.PrintMessage(battleInfo, false);
-                    ioManager.PrintMessage(PlayerTurn(player, monster, select - 1), false);
-
-                    Console.ReadKey();
-
-                    
-                    if (monster.monsters[select - 1].Hp == 0)
+                    if (atkSelect == 1) // 평타 사용
                     {
-                        ioManager.PrintMessage($"{monster.monsters[select - 1].Name} 은(는) 이미 처치되었습니다. 다른 몬스터를 선택하세요.\n", false);
-                        continue;
-                    }
-                    if (monster.monsters.Count == 0)
-                    {
-                        ioManager.PrintMessage($"던전에서 몬스터 {monster.monsters.Count}마리를 잡았습니다.\n", false);
-                        ioManager.PrintMessage(battleInfo, false);                  //필요없는 부분
+                        monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true);
+                        ioManager.PrintMessage(PlayerTurn(player, monster, monSelect - 1, skillSelect, false ), false);
+
                         Console.ReadKey();
+
                     }
+                    else if (atkSelect == 2) // 스킬 사용
+                    {
+                        string[] playerSkills = { player.GetSkillNameOne(), player.GetSkillNameTwo() };
+                        skillSelect = ioManager.PrintMessageWithNumberForSelect(playerSkills, false);
+                        
+
+                        if (skillSelect == 1) // 스킬 1
+                        {
+                            monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true);
+                            
+                            
+                            ioManager.PrintMessage(PlayerTurn(player, monster, monSelect - 1, skillSelect, true), false);
+                            Console.ReadKey();
+                        }
+                        else if (skillSelect == 2) // 스킬 2
+                        {
+
+                            monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true);
+
+
+                            ioManager.PrintMessage(PlayerTurn(player, monster, monSelect - 1, skillSelect, true), false);
+                            Console.ReadKey();
+                        }
+                    }
+
                 }
                 else
                 {
@@ -153,7 +181,6 @@
                     {
                         if (monster.monsters[i].Hp > 0)
                         {
-                            Console.Clear();
                             ioManager.PrintMessage(MonsterTurn(player, monster, i), true);
                             Console.ReadKey();
                         }
