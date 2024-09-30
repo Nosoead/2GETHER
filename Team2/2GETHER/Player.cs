@@ -14,13 +14,19 @@
         public int Exp { get; private set; }
         public int MaxExp { get; private set; }
         public EJob Job { get; private set; }
-        public bool EquippedWeapon { get; private set; }
-        public bool EquippedArmor { get; private set; }
+        public bool EquippedWeapon { get; private set; } = false;
+        public bool EquippedArmor { get; private set; } = false;
         public int Potions { get; private set; }
 
         private const int MaxLevel = 5;
 
         private Random random = new Random();
+
+        public Item[] WeaponEquipment = new Item[1];
+
+        public Item[] ArmorEquipment = new Item[1];
+
+        public List<Item> InventoryItems = new List<Item>();
 
         public Player()
         {
@@ -89,7 +95,7 @@
             if (Hp < 0) Hp = 0;
         }
 
-        public void UseSkillOne(Monster monster)
+        public double UseSkillOne(Monster monster)
         {
             if (Mp >= 10)
             {
@@ -97,14 +103,16 @@
                 double damage = Attack * 2;
 
                 monster.MonsterDamageTaken(damage);
+                return damage;
             }
             else
             {
-                return;
+                Console.WriteLine("MP가 부족합니다!");
+                return 0;
             }
         }
 
-        public void UseSkillTwo(List<Monster> monsters)
+        public double UseSkillTwo(List<Monster> monsters)
         {
             if (Mp >= 15)
             {
@@ -114,19 +122,30 @@
                 if (monsters.Count == 1)
                 {
                     monsters[0].MonsterDamageTaken(damage);
+                    return damage;
                 }
                 else
                 {
-                    Monster firstTarget = monsters[random.Next(monsters.Count)];
-                    Monster secondTarget = monsters[random.Next(monsters.Count)];
+                    int firstMonster = random.Next(monsters.Count);
+                    int secondMonster;
+
+                    do
+                    {
+                        secondMonster = random.Next(monsters.Count);
+                    } while (secondMonster == firstMonster);
+
+                    Monster firstTarget = monsters[firstMonster];
+                    Monster secondTarget = monsters[secondMonster];
 
                     firstTarget.MonsterDamageTaken(damage);
                     secondTarget.MonsterDamageTaken(damage);
+                    return damage;
                 }
             }
             else
             {
-                return;
+                Console.WriteLine("MP가 부족합니다!");
+                return 0;
             }
         }
 
@@ -136,10 +155,13 @@
             {
                 case EJob.전사:
                     return "강타";
+
                 case EJob.마법사:
                     return "화염구";
+
                 case EJob.궁수:
                     return "속사";
+
                 default:
                     return "기본 공격";
             }
@@ -151,10 +173,13 @@
             {
                 case EJob.전사:
                     return "폭풍 가르기";
+
                 case EJob.마법사:
                     return "얼음 폭풍";
+
                 case EJob.궁수:
                     return "연속 사격";
+
                 default:
                     return "기본 공격";
             }
@@ -193,12 +218,15 @@
                 case 2:
                     MaxExp = 35;
                     break;
+
                 case 3:
                     MaxExp = 65;
                     break;
+
                 case 4:
                     MaxExp = 100;
                     break;
+
                 case 5:
                     MaxExp = 0;
                     Console.WriteLine("축하드립니다! 최대 레벨에 도달했습니다!");
@@ -241,9 +269,47 @@
 
         }
 
-        public Item[] WeaponEquipment = new Item[1];
-        public Item[] ArmorEquipment = new Item[1];
-        public List<Item> InventoryItems = new List<Item>();
+        public void UpdateStatsOnEquip(Item item)
+        {
+            Attack += item.itemATK;
+            Defense += item.itemDEF;
+        }
+
+        public void UpdateStatsOnUnequip(Item item)
+        {
+            Attack -= item.itemATK;
+            Defense -= item.itemDEF;
+        }
+
+        public void EquipItem(int inputNum, Inventory inventory)
+        {
+            if (inputNum < 1 || inputNum > InventoryItems.Count)
+            {
+                Console.WriteLine("유효하지 않은 아이템 번호입니다.");
+                return;
+            }
+
+            Item item = InventoryItems[inputNum - 1];
+
+            if (item.isArmor)
+            {
+                if (ArmorEquipment[0] != null)
+                {
+                    UpdateStatsOnUnequip(ArmorEquipment[0]);
+                }
+                ArmorEquipment[0] = item;
+                UpdateStatsOnEquip(item);
+            }
+            else
+            {
+                if (WeaponEquipment[0] != null)
+                {
+                    UpdateStatsOnUnequip(WeaponEquipment[0]);
+                }
+                WeaponEquipment[0] = item;
+                UpdateStatsOnEquip(item);
+            }
+        }
 
         public int Buy(Item item)
         {
@@ -255,6 +321,16 @@
         {
             Gold += item.price*85/100;
             return Gold;
+        }
+
+        public void ChangeName(string name)
+        {
+            Name = name;
+        }
+
+        public void ChangeJob(EJob job)
+        {
+            Job = job;
         }
     }
 

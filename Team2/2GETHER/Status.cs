@@ -2,9 +2,9 @@
 {
     class Status
     {
-        public string GetStatusInfo(Player player)
+        public void GetStatusInfo(Player player, IOManager ioManager)
         {
-            string[] statusinfo = new string[]
+            string[] statusInfo = new string[]
             {
                 "상태 보기",
                 "캐릭터의 정보가 표시됩니다.",
@@ -17,7 +17,7 @@
                 ""                
             };
 
-            return string.Join("\n", statusinfo);
+            ioManager.PrintMessage(statusInfo, false);
         }
     }
 }
