@@ -3,10 +3,13 @@
 namespace _2GETHER
 {
     class Dungeon
-    {
+    {   
        
         public string[] PlayerTurn(Player player, Monster monster, int monSelect, int skillSelect, bool isSkillUsed = false )
         {
+            string AreaAttackName = player.GetSkillNameTwo();
+
+
             if (monster.monsters[monSelect].Hp <= 0)
             {
                 return new string[]
@@ -22,28 +25,50 @@ namespace _2GETHER
 
 
             double previousHp = monster.monsters[monSelect].Hp;
-
+           
             double damage=0;
-                
+            
+
             if (isSkillUsed && skillSelect == 1)
             {
                 damage = player.UseSkillOne(monster.monsters[monSelect]);
             }
             else if(isSkillUsed && skillSelect == 2)
             {
+                
                 damage = player.UseSkillTwo(monster.monsters);
+                List<Monster> attackedMonster = player.GetAttackedMonster();
+                string areaAttack2 = $"Lv.{player.Level} {player.Name} 의 {AreaAttackName} 사용!\n";
+                
+                foreach (var target in attackedMonster)
+                {
+                    string status = (target.Hp == 0) ? "Dead" : target.Hp.ToString();
+                    areaAttack2 += $"Lv.{target.Level} {target.Name} {target.Hp+damage} -> {target.Hp}[ 데미지 : {damage}]\n"; 
+                }
+                attackedMonster.Clear();
+                
+
+                return new string[]
+                {
+                    "Battle!!",
+                    "",
+                    $"{areaAttack2}",
+                    "",
+                    ">>",
+                    ""
+                };
             }
             else
             {
                 damage = player.AttackWithEffects();
                 player.PlayerAttack(monster.monsters[monSelect]);
             }
-
+            
             string hpInfo = (monster.monsters[monSelect].Hp == 0) ? "Dead" : monster.monsters[monSelect].Hp.ToString();
 
             string criticalHitMessage = (damage > player.Attack && damage < player.Attack * 2) ? "치명타 공격!!" : "";
 
-
+                
             string attackMessage = (damage == 0)
              ? $"{monster.monsters[monSelect].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
              : $"{monster.monsters[monSelect].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
@@ -91,7 +116,7 @@ namespace _2GETHER
             };
             return monsterTurn;
         }
-
+        
         public void StartBattle(Player player, Monster monster, IOManager ioManager)
         {
             monster.CreateMonster();
@@ -166,10 +191,10 @@ namespace _2GETHER
                         else if (skillSelect == 2) // 스킬 2
                         {
 
-                            monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true);
-
-
-                            ioManager.PrintMessage(PlayerTurn(player, monster, monSelect - 1, skillSelect, true), false);
+                            ioManager.PrintMessage(randomMonstersInfo, true);
+                            ioManager.PrintMessage(battleInfo, false);
+                            Console.ReadKey();
+                            ioManager.PrintMessage(PlayerTurn(player, monster,0, skillSelect, true), false);
                             Console.ReadKey();
                         }
                     }
