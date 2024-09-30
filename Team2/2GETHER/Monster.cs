@@ -24,17 +24,7 @@
             Hp = hp;
             Attack = attack;
         }
-
-        public string GetMonsterInfo()
-        {
-            return $"Lv: {Level}, {Name}, HP: {Hp}, ATK: {Attack}";
-        }
-
-        public void MonsterAtk()
-        {
-
-        }
-
+        
         public void MonsterDamageTaken(double damage)
         {
             Hp -= damage;
