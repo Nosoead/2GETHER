@@ -2,16 +2,35 @@
 {
     class Dungeon
     {
+        //public void PrintMonsterStatus(Monster monster, IOManager ioManager)
+        //{
+        //    string[] monsterStatus = monster.monsters
+        //        .Select(m => $"Lv. {m.Level} {m.Name} {(m.Hp == 0 ? "Dead" : $"HP {m.Hp}")}")
+        //        .ToArray();
+
+        //    ioManager.PrintMessage(monsterStatus, false);
+        //}
 
         public string[] PlayerTurn(Player player, Monster monster, int selectNum)
         {
+            if (monster.monsters[selectNum].Hp == 0)
+            {
+                return new string[]
+                {
+                    $"{monster.monsters[selectNum].Name} 은(는) 이미 처치되었습니다!",
+                    "",
+                    "0. 다음",
+                    ">>",
+                    ""
+                };
+            }
             double damage = player.AttackWithEffects();
 
-            double previousHp = monster.Hp;
+            double previousHp = monster.monsters[selectNum].Hp;
 
-            monster.MonsterDamageTaken(damage);
+            monster.monsters[selectNum].MonsterDamageTaken(damage);
 
-            string hpInfo = (monster.Hp == 0) ? "Dead" : monster.Hp.ToString();
+            string hpInfo = (monster.monsters[selectNum].Hp == 0) ? "Dead" : monster.monsters[selectNum].Hp.ToString();
 
             string criticalHitMessage = (damage > player.Attack) ? "치명타 공격!!" : "";
             string attackMessage = (damage == 0)
@@ -22,22 +41,44 @@
             {
                 "Battle!!",
                 "",
-                 $"Lv.{player.Level} {player.Name} 의 공격!",
-                 attackMessage,
+                $"Lv.{player.Level} {player.Name} 의 공격!",
+                attackMessage,
                 "",
                 $"Lv.{monster.monsters[selectNum].Level} {monster.monsters[selectNum].Name}",
                 $"HP {previousHp} -> {hpInfo}",
                 "",
-                "0. 다음",
                 "",
                 ">>",
                 ""
             };
             return playerTurn;
         }
+        public string[] MonsterTurn(Player player, Monster monster, int selectNum)
+        {
+            double damage = monster.monsters[selectNum].Attack;
 
+            double previousHp = player.Hp;
 
+            player.PlayerDamageTaken(damage);
 
+            double currentHp = player.Hp;
+
+            string[] monsterTurn = new string[]
+            {
+                "Battle!!",
+                "",
+                $"Lv.{monster.monsters[selectNum].Level} {monster.monsters[selectNum].Name} 의 공격!",
+                "",
+                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {damage} ]",
+                $"HP {previousHp} ->{currentHp}",
+                "",
+                "0. 다음",
+                "",
+                ">>",
+                ""
+            };
+            return monsterTurn;
+        }
 
         public void StartBattle(Player player, Monster monster, IOManager ioManager)
         {
@@ -45,10 +86,11 @@
 
             int count = 0;
             int select;
+
             string[] randomMonsters = new string[monster.monsters.Count];
             for (int i = 0; i < monster.monsters.Count; i++)
             {
-                randomMonsters[i] = monster.monsters[i].GetMonsterInfo();
+                randomMonsters[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} HP {monster.monsters[i].Hp}";
             }
 
             ioManager.PrintMessage("전투시작!\n", true);
@@ -58,7 +100,7 @@
             {
                 "\n[내정보]\n",
                 $"Lv.{player.Level}  {player.Name}  ({player.Job})",
-                $"HP {player.Hp}/100\n"
+                $"HP {player.Hp}/{player.MaxHp}\n"
             };
             ioManager.PrintMessage(battleInfo, false);
 
@@ -71,46 +113,53 @@
 
             while (player.Hp > 0 && monster.monsters.Count > 0)
             {
+                battleInfo = new string[]
+                {
+                    "\n[내정보]\n",
+                    $"Lv.{player.Level}  {player.Name}  ({player.Job})",
+                    $"HP {player.Hp}/{player.MaxHp}\n"
+                };
+                ioManager.PrintMessage(battleInfo, false);
+                for (int i = 0; i < monster.monsters.Count; i++)
+                {
+                    string monsterStatus = monster.monsters[i].Hp == 0 ? "Dead" : $"HP {monster.monsters[i].Hp}";
+                    randomMonsters[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} {monsterStatus}";
+                }
                 if (count % 2 == 0)
                 {
                     select = ioManager.PrintMessageWithNumberForSelect(randomMonsters, true);
-                    ioManager.PrintMessage(battleInfo, false);
-                    ioManager.PrintMessage(PlayerTurn(player, monster, select-1), false);
 
-                    ioManager.PrintMessage("0. 취소");
+                    ioManager.PrintMessage(battleInfo, false);
+                    ioManager.PrintMessage(PlayerTurn(player, monster, select - 1), false);
+
                     Console.ReadKey();
 
-                    int monstersDefeated = 0;
-                    if (monster.monsters[select - 1].Hp <= 0)
+                    
+                    if (monster.monsters[select - 1].Hp == 0)
                     {
-                        ioManager.PrintMessage($"몬스터 {monster.monsters[select - 1].Name}를 처치했습니다.", false);
-                        monstersDefeated++;
-                        monster.monsters.RemoveAt(select - 1);
+                        ioManager.PrintMessage($"{monster.monsters[select - 1].Name} 은(는) 이미 처치되었습니다. 다른 몬스터를 선택하세요.\n", false);
+                        continue;
                     }
                     if (monster.monsters.Count == 0)
                     {
-                        ioManager.PrintMessage($"던전에서 몬스터 {monstersDefeated}마리를 잡았습니다.\n", false);
-                        ioManager.PrintMessage(battleInfo, false);
+                        ioManager.PrintMessage($"던전에서 몬스터 {monster.monsters.Count}마리를 잡았습니다.\n", false);
+                        ioManager.PrintMessage(battleInfo, false);                  //필요없는 부분
+                        Console.ReadKey();
                     }
                 }
                 else
                 {
                     for (int i = 0; i < monster.monsters.Count; i++)
                     {
-                        Console.Clear();
-                        ioManager.PrintMessage(PlayerTurn(player, monster, select -1), true);
-                        Console.ReadKey();
+                        if (monster.monsters[i].Hp > 0)
+                        {
+                            Console.Clear();
+                            ioManager.PrintMessage(MonsterTurn(player, monster, i), true);
+                            Console.ReadKey();
+                        }
                     }
                 }
                 count++;
-            }
-            if (player.Hp <= 0)
-            {
-                // 플레이어가 죽은 상태 표시
-            }
-            else if (monster.monsters.Count == 0)
-            {
-                // 전투승리 표시
             }
         }
     }
