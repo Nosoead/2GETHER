@@ -10,16 +10,25 @@
         }
     }
 
-    public class GameManager
+    class GameManager
     {
-        Player player = new Player();
+        public Player player = new Player();
+        public ItemManager itemManager = new ItemManager();
+
         Dungeon dungeon = new Dungeon();
         IOManager ioManager = new IOManager();
-        //Dungeon dungeon = new Dungeon(ioManager);
         Store store = new Store();
         Inventory inventory = new Inventory();
-        ItemManager itemManager = new ItemManager();
         //장작관련 정보 - 플레이어랑 연결 //Inven-> add/remove 
+
+        DataManager dataManager;
+
+        public GameManager ()
+        {
+            dataManager = new DataManager(this);
+        }
+
+
         public void GameStart()
         {
             ioManager.PrintMessage(ioManager.GameStartSceneMessage);
@@ -65,8 +74,7 @@
 
                 //임시 테스트용
                 case 5:
-                    ioManager.PrintMessage("sdfsdf");
-                    ioManager.PrintDebugMessage();
+                    /*dataManager.SaveData();*/
                     break;
             }
 
