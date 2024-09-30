@@ -16,6 +16,7 @@
         public EJob Job { get; private set; }
         public bool EquippedWeapon { get; private set; }
         public bool EquippedArmor { get; private set; }
+        public int Potions { get; private set; }
 
         private const int MaxLevel = 5;
 
@@ -81,9 +82,9 @@
             monster.MonsterDamageTaken(damage);
         }
 
-        public void PlayerDamageTaken(Monster monster)
+        public void PlayerDamageTaken(double damage)
         {
-            Hp -= monster.Attack;
+            Hp -= damage;
 
             if (Hp < 0) Hp = 0;
         }
@@ -217,7 +218,22 @@
 
         public void UsePotion()
         {
+            if (Potions > 0)
+            {
+                Hp += 30;
 
+                if (Hp > MaxHp)
+                {
+                    Hp = MaxHp;
+                }
+
+                Potions--;
+                Console.WriteLine("회복을 완료했습니다. 현재 체력: {0}/{1}", Hp, MaxHp);
+            }
+            else
+            {
+                Console.WriteLine("포션이 부족합니다.");
+            }
         }
 
         public void QuestReward()
@@ -234,6 +250,7 @@
             Gold -= item.price;
             return Gold;
         }
+
         public int Sell(Item item)
         {
             Gold += item.price*85/100;
