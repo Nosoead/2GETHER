@@ -14,9 +14,8 @@
         public int Exp { get; private set; }
         public int MaxExp { get; private set; }
         public EJob Job { get; private set; }
-        public bool EquippedWeapon { get; private set; } = false;
-        public bool EquippedArmor { get; private set; } = false;
         public int Potions { get; private set; }
+        public int MonsterKills { get; private set; }
 
         private const int MaxLevel = 5;
 
@@ -25,8 +24,10 @@
         public Item[] WeaponEquipment = new Item[1];
 
         public Item[] ArmorEquipment = new Item[1];
+        public List<Item> InventoryItems { get; private set; }  = new List<Item>();
 
-        public List<Item> InventoryItems = new List<Item>();
+        List<Monster> AttackedMonster = new List<Monster>();
+
 
         public Player()
         {
@@ -42,8 +43,8 @@
             Exp = 0;
             MaxExp = 100;
             Job = EJob.전사;
-            EquippedWeapon = false;
-            EquippedArmor = false;
+            Potions = 3;
+            MonsterKills = 0;
         }
 
         public Player(string name, EJob job)
@@ -60,8 +61,8 @@
             Gold = 0;
             Exp = 0;
             MaxExp = 100;
-            EquippedWeapon = false;
-            EquippedArmor = false;
+            Potions = 3;
+            MonsterKills = 0;
         }
 
         public double AttackWithEffects()
@@ -122,6 +123,7 @@
                 if (monsters.Count == 1)
                 {
                     monsters[0].MonsterDamageTaken(damage);
+                    AttackedMonster.Add(monsters[0]);
                     return damage;
                 }
                 else
@@ -137,6 +139,9 @@
                     Monster firstTarget = monsters[firstMonster];
                     Monster secondTarget = monsters[secondMonster];
 
+                    AttackedMonster.Add(firstTarget);
+                    AttackedMonster.Add(secondTarget);
+
                     firstTarget.MonsterDamageTaken(damage);
                     secondTarget.MonsterDamageTaken(damage);
                     return damage;
@@ -149,18 +154,23 @@
             }
         }
 
+        public List<Monster> GetAttackedMonster()
+        {
+            return AttackedMonster;
+        }
+
         public string GetSkillNameOne()
         {
             switch (Job)
             {
                 case EJob.전사:
-                    return "강타";
+                    return "\n강타 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 case EJob.마법사:
-                    return "화염구";
+                    return "\n화염구 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 case EJob.궁수:
-                    return "속사";
+                    return "\n속사 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 default:
                     return "기본 공격";
@@ -172,13 +182,13 @@
             switch (Job)
             {
                 case EJob.전사:
-                    return "폭풍 가르기";
+                    return "폭풍 가르기 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.\n";
 
                 case EJob.마법사:
-                    return "얼음 폭풍";
+                    return "얼음 폭풍 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.\n";
 
                 case EJob.궁수:
-                    return "연속 사격";
+                    return "연속 사격 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.\n";
 
                 default:
                     return "기본 공격";
@@ -264,11 +274,6 @@
             }
         }
 
-        public void QuestReward()
-        {
-
-        }
-
         public void UpdateStatsOnEquip(Item item)
         {
             Attack += item.itemATK;
@@ -332,7 +337,29 @@
         {
             Job = job;
         }
+        
+        public void AddGold(int amount)
+        {
+            Gold += amount;
+        }
+
+        public void AddItem(Item item)
+        {
+            if (item != null)
+            {
+                InventoryItems.Add(item);
+            }
+            else
+            {
+                Console.WriteLine("잘못된 아이템입니다.");
+            }
+        }
+
+        public void IncrementMonsterKills()
+        {
+            MonsterKills++;
+        }
     }
 
-    public enum EJob { 전사, 궁수, 마법사 }
+    public enum EJob { 공용, 전사, 궁수, 마법사 }
 }

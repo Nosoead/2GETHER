@@ -15,19 +15,21 @@
         public Player player = new Player();
         public ItemManager itemManager = new ItemManager();
 
+        Quest quest;
+        Intro intro = new Intro();
+        Status status = new Status();
+        Monster monster = new Monster();
         Dungeon dungeon = new Dungeon();
         IOManager ioManager = new IOManager();
         Store store = new Store();
         Inventory inventory = new Inventory();
-        //장작관련 정보 - 플레이어랑 연결 //Inven-> add/remove 
-
         DataManager dataManager;
 
         public GameManager ()
         {
             dataManager = new DataManager(this);
+            quest = new Quest(itemManager, player);
         }
-
 
         public void GameStart()
         {
@@ -72,18 +74,30 @@
                     Dungeon();
                     break;
 
-                //임시 테스트용
                 case 5:
-                    /*dataManager.SaveData();*/
+                    Quest();
+                    break;
+
+                case 6:
+                    //저장하기 or 불러오기
+                    break;
+
+                case 7:
+                    //테스트
                     break;
             }
 
             return;
         }
+        public void Intro()
+        {
+            intro.SetPlayerName(player, ioManager);
+            intro.SetPlayerJob(player, ioManager);
+        }
 
         public void Status()
         {
-
+            status.GetStatusInfo(player, ioManager);
         }
 
         public void Inventory()
@@ -98,7 +112,12 @@
 
         public void Dungeon()
         {
-            //dungeon.StartBattle(player);
+            dungeon.StartBattle(player, monster, ioManager);
+        }
+
+        public void Quest()
+        {
+            quest.QuestList(ioManager);
         }
     }
 }

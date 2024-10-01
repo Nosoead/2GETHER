@@ -23,17 +23,17 @@
             string[] jobIntro = new string[]
             {
             "스파르타 던전 RPG에는 3가지의 직업이 있습니다.",
-            "아래 3가지의 직업 중에 하나를 선택해주세요."
+            "아래 3가지의 직업 중에 하나를 선택해주세요.",
+            ""
             };
 
-            ioManager.PrintMessage(jobIntro, false);
+            ioManager.PrintMessage(jobIntro, true);
 
             string[] jobInfo = new string[]
             {
             "전사",
             "마법사",
             "궁수",
-            ">>"
             };
 
             while (true)
