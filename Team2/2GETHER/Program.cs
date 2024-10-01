@@ -34,8 +34,7 @@
 
         public void GameStart()
         {
-            ioManager.PrintMessage(ioManager.GameStartSceneMessage);
-            ioManager.PlzInputAnyKey();
+            Intro();
             Game();
         }
 
