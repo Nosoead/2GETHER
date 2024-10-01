@@ -24,16 +24,44 @@ namespace _2GETHER
 
         public Dictionary<string, ConsoleColor> MessageColor = new Dictionary<string, ConsoleColor>();
 
-        public void InitializeMessageColors()
+        public void InitializeMessageColors(Player player)
         {
+            switch(player.Job)
+            {
+                case EJob.전사:
+                    MessageColor["전사"] = ConsoleColor.Green;
+                    MessageColor["궁수"] = ConsoleColor.DarkRed;
+                    MessageColor["마법사"] = ConsoleColor.DarkRed;
+                    break;
+
+                case EJob.궁수:
+                    MessageColor["전사"] = ConsoleColor.DarkRed;
+                    MessageColor["궁수"] = ConsoleColor.Green;
+                    MessageColor["마법사"] = ConsoleColor.DarkRed;
+                    break;
+
+                case EJob.마법사:
+                    MessageColor["전사"] = ConsoleColor.DarkRed;
+                    MessageColor["궁수"] = ConsoleColor.DarkRed;
+                    MessageColor["마법사"] = ConsoleColor.Green;
+                    break;
+            }
+
             MessageColor["상태 보기"] = ConsoleColor.DarkYellow;
             MessageColor["Battle"] = ConsoleColor.Red;
             MessageColor["Dead"] = ConsoleColor.DarkGray;
         }
 
-        public void PrintDebugMessage(string message = "디버그용 출력 메세지입니다.")
+        public void PrintDebugMessage(string message = "디버그용 출력 메세지입니다.", bool applyColor = false)
         {
-            Console.WriteLine(message);
+            if (applyColor)
+            {
+                PrintWithColor(message);
+            }
+            else
+            {
+                Console.WriteLine(message);
+            }
             Console.ReadKey();
         }
 

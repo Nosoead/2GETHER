@@ -49,29 +49,26 @@ namespace _2GETHER
             saveData.Exp = currentPlayer.Exp;
             saveData.MaxExp = currentPlayer.MaxExp;
             saveData.Job = currentPlayer.Job.ToString();
-            //saveData.EquippedWeapon = currentPlayer.WeaponEquipment[0];
-            //saveData.EquippedArmor = currentPlayer.EquippedArmor;
             saveData.Potions = currentPlayer.Potions;
             saveData.MonsterKills = currentPlayer.MonsterKills;
             saveData.WeaponEquipment = currentPlayer.WeaponEquipment[0]?.eItem.ToString();
             saveData.ArmorEquipment = currentPlayer.ArmorEquipment[0]?.eItem.ToString();
 
-            List<string> soldItems = new List<string>();
-            foreach (Item item in currentItemManager?.items)
-            {
-                /*if (item.isPlayerBuy)
-                {
-                    soldItems.Add(item.eItem.ToString());
-                }*/
-            }
-            saveData.SoldItems = soldItems;
+            saveData.EquipmentInventory = new Dictionary<string, int>();
+            saveData.ConsumableInventory = new Dictionary<string, int>();
 
-            List<string> inventoryItems = new List<string>();
-            /*foreach (var item in currentPlayer.InventoryItems)
+            foreach (var item in currentPlayer.equipmentInventory)
             {
-                inventoryItems.Add(item.eItem.ToString());
-            }*/
-            saveData.InventoryItems = inventoryItems;
+                saveData.EquipmentInventory.Add(item.eItem.ToString(), item.ItemCount);
+            }
+
+            /*Console.WriteLine(saveData.EquipmentInventory.Count);
+            Console.ReadKey(true);*/
+
+            foreach (var item in currentPlayer.consumableInventory)
+            {
+                saveData.ConsumableInventory.Add(item.eItem.ToString(), item.ItemCount);
+            }
 
             var options = new JsonSerializerOptions
             {
@@ -124,6 +121,7 @@ namespace _2GETHER
                 loadedData.Hp, loadedData.MaxHp, loadedData.Mp, loadedData.MaxMp, loadedData.Gold, loadedData.Exp,
                 loadedData.MaxExp, job, loadedData.Potions, loadedData.MonsterKills);
 
+            //개씹고트
             //var butItems = currentItemManager.items.Where
                 //(item => loadedData.SoldItems.Contains(item.eItem.ToString())).ToList();
             
@@ -175,7 +173,7 @@ namespace _2GETHER
 
         public void SaveOrLoad()
         {
-            LoadingData();
+            //LoadingData();
 
             int select = -1;
             while (true)
@@ -231,21 +229,8 @@ namespace _2GETHER
         public string WeaponEquipment { get; set; }
         public string ArmorEquipment { get; set; }
 
-        public List<string> InventoryItems { get; set; }
-
-        public List<string> SoldItems { get; set; }
-        /*public List<string> inventoryItems = new List<string>();
-        public List<string> InventoryItems
-        {
-            get
-            {
-                return inventoryItems;
-            }
-            set
-            {
-                inventoryItems = value;
-            }
-        }*/
+        public Dictionary<string, int> EquipmentInventory { get; set; }
+        public Dictionary<string, int> ConsumableInventory { get; set; }
 
     }
 }

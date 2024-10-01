@@ -30,7 +30,7 @@
         {
             dataManager = new DataManager(this, ioManager);
             quest = new Quest(itemManager, player);
-            ioManager.InitializeMessageColors();
+            ioManager.InitializeMessageColors(player);
         }
 
         public void GameStart()
