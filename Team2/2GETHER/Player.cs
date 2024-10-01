@@ -82,11 +82,13 @@
             return damage;
         }
 
-        public void PlayerAttack(Monster monster)
+        public double PlayerAttack(Monster monster)
         {
             double damage = AttackWithEffects();
 
             monster.MonsterDamageTaken(damage);
+
+            return damage;
         }
 
         public void PlayerDamageTaken(double damage)
@@ -164,13 +166,13 @@
             switch (Job)
             {
                 case EJob.전사:
-                    return "\n강타 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
+                    return "강타 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 case EJob.마법사:
-                    return "\n화염구 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
+                    return "화염구 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 case EJob.궁수:
-                    return "\n속사 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
+                    return "속사 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 default:
                     return "기본 공격";
