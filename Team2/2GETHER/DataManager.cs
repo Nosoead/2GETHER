@@ -1,16 +1,23 @@
 ﻿using System.Data.SqlTypes;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using System.Data;
 
 namespace _2GETHER
 {
+    using System;
     class DataManager
     {
+        readonly int FileMaxCount = 5;
         string saveFileName = "savegame.json";
+        List <string> FileLoadingMessage = new List<string>();
 
         IOManager ioManager;
         Player? currentPlayer;
         ItemManager? currentItemManager;
         GameManager currentGameManager;
+
+        Data[] SavedData = new Data[5];
 
         string[] SaveOrLoadMessage =
         {
@@ -52,18 +59,18 @@ namespace _2GETHER
             List<string> soldItems = new List<string>();
             foreach (Item item in currentItemManager?.items)
             {
-                if (item.isPlayerBuy)
+                /*if (item.isPlayerBuy)
                 {
                     soldItems.Add(item.eItem.ToString());
-                }
+                }*/
             }
             saveData.SoldItems = soldItems;
 
             List<string> inventoryItems = new List<string>();
-            foreach (var item in currentPlayer.InventoryItems)
+            /*foreach (var item in currentPlayer.InventoryItems)
             {
                 inventoryItems.Add(item.eItem.ToString());
-            }
+            }*/
             saveData.InventoryItems = inventoryItems;
 
             var options = new JsonSerializerOptions
@@ -72,8 +79,14 @@ namespace _2GETHER
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
+            DateTime now = DateTime.Now;
+            string saveMessage = $" 마지막 저장 시점 : {now.ToString("f")}";
+            saveData.DataSaveTime = saveMessage;
+
             string jsonData = JsonSerializer.Serialize(saveData, options);
             File.WriteAllText(saveFileName, jsonData);
+
+            ioManager.PrintDebugMessage("저장 완료");
         }
 
         public void LoadData()
@@ -114,20 +127,48 @@ namespace _2GETHER
             //var butItems = currentItemManager.items.Where
                 //(item => loadedData.SoldItems.Contains(item.eItem.ToString())).ToList();
             
-            foreach (var item in currentItemManager.items)
+            /*foreach (var item in currentItemManager.items)
             {
                 if (loadedData.SoldItems.Contains (item.eItem.ToString()))
                 {
                     item.isPlayerBuy = true;
                 }
-            }
+            }*/
+
 
 
             //currentItemManager.items
         }
 
+        public void LoadingData()
+        {
+            int number = 0;
+            int fileSelect = -1;
+
+            for (number = 0; number < FileMaxCount; number++)
+            {
+                string FileName = $"myJson{number + 1}.json";
+
+                if (!File.Exists(FileName))
+                {
+                    FileLoadingMessage.Add("빈 슬롯");
+                    return;
+                }
+            }
+
+            fileSelect = ioManager.PrintMessageWithNumberForSelect(FileLoadingMessage.ToArray(), true);
+            Console.ReadLine();
+            /*if (!File.Exists(saveFileName))
+            {
+                ioManager.PrintDebugMessage("저장된 게임 데이터가 없습니다.");
+                return;
+            }*/
+        }
+
         public void SaveOrLoad()
         {
+            LoadingData();
+
             int select = -1;
             while (true)
             {
@@ -161,6 +202,8 @@ namespace _2GETHER
 
     struct Data
     {
+        public string DataSaveTime {  get; set; }
+
         public string Name { get; set; }
         public int Level { get; set; }
         public double Attack { get; set; }
