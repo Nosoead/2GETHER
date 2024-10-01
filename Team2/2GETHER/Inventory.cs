@@ -78,12 +78,14 @@
             {
                 player.equipmentInventory[inputNum - 1].IsPlayerEquip = true;
                 player.ArmorEquipment[0] = player.equipmentInventory[inputNum - 1];
+                player.UpdateStatsOnEquip(player.ArmorEquipment[0]);
             }
             else
             {
 
                 if (player.ArmorEquipment[0].eItem == player.equipmentInventory[inputNum - 1].eItem)
                 {
+                    player.UpdateStatsOnUnequip(player.ArmorEquipment[0]);
                     player.ArmorEquipment[0] = null;
                     player.equipmentInventory[inputNum - 1].IsPlayerEquip = false;
                 }
@@ -94,8 +96,10 @@
                         if (player.ArmorEquipment[0].eItem == player.equipmentInventory[i].eItem)
                         {
                             player.equipmentInventory[i].IsPlayerEquip = false;
+                            player.UpdateStatsOnUnequip(player.equipmentInventory[i]);
                             player.equipmentInventory[inputNum - 1].IsPlayerEquip = true;
                             player.ArmorEquipment[0] = player.equipmentInventory[inputNum - 1];
+                            player.UpdateStatsOnEquip(player.ArmorEquipment[0]);
                         }
                     }
                 }
@@ -107,12 +111,14 @@
             {
                 player.equipmentInventory[inputNum - 1].IsPlayerEquip = true;
                 player.WeaponEquipment[0] = player.equipmentInventory[inputNum - 1];
+                player.UpdateStatsOnEquip(player.WeaponEquipment[0]);
             }
             else
             {
 
                 if (player.WeaponEquipment[0].eItem == player.equipmentInventory[inputNum - 1].eItem)
                 {
+                    player.UpdateStatsOnUnequip(player.WeaponEquipment[0]);
                     player.WeaponEquipment[0] = null;
                     player.equipmentInventory[inputNum - 1].IsPlayerEquip = false;
                 }
@@ -123,8 +129,10 @@
                         if (player.WeaponEquipment[0].eItem == player.equipmentInventory[i].eItem)
                         {
                             player.equipmentInventory[i].IsPlayerEquip = false;
+                            player.UpdateStatsOnUnequip(player.equipmentInventory[i]);
                             player.equipmentInventory[inputNum - 1].IsPlayerEquip = true;
                             player.WeaponEquipment[0] = player.equipmentInventory[inputNum - 1];
+                            player.UpdateStatsOnEquip(player.WeaponEquipment[0]);
                         }
                     }
                 }
