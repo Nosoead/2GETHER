@@ -28,7 +28,7 @@
 
         public GameManager ()
         {
-            dataManager = new DataManager(this);
+            dataManager = new DataManager(this, ioManager);
             quest = new Quest(itemManager, player);
         }
 
@@ -81,9 +81,7 @@
 
                 //저장 불러오기 제작중
                 case 6:
-                    dataManager.SaveData();
-                    ioManager.PrintMessage("저장 완료");
-                    ioManager.PlzInputAnyKey();
+                    SaveLoad();
                     break;
 
                 case 7:
@@ -122,6 +120,11 @@
         public void Quest()
         {
             quest.QuestList(ioManager);
+        }
+
+        public void SaveLoad()
+        {
+            dataManager.SaveOrLoad();
         }
     }
 }

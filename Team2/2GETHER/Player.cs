@@ -21,10 +21,10 @@
 
         private Random random = new Random();
 
-        public Item[] WeaponEquipment = new Item[1];
-
-        public Item[] ArmorEquipment = new Item[1];
-        public List<Item> InventoryItems { get; private set; }  = new List<Item>();
+        public EquipmentItem[] WeaponEquipment = new EquipmentItem[1];
+        public EquipmentItem[] ArmorEquipment = new EquipmentItem[1];
+        public List<EquipmentItem> equipmentInventory = new List<EquipmentItem>();
+        public List<ConsumableItem> consumableInventory = new List<ConsumableItem>();
 
         List<Monster> AttackedMonster = new List<Monster>();
 
@@ -197,12 +197,13 @@
             }
         }
 
-        public void GainExp(int gainExp)
+        public int GainExp(int gainExp)
         {
             if (Level >= MaxLevel)
             {
                 Console.WriteLine("최대 레벨에 도달하여 더 이상 경험치를 얻을 수 없습니다.");
-                return;
+                Console.ReadKey(true);
+                return 0;
             }
 
             Exp += gainExp;
@@ -211,6 +212,8 @@
             {
                 LevelUp();
             }
+
+            return Exp;
         }
 
         public void LevelSystem(Monster monster)
@@ -227,6 +230,10 @@
 
             switch (Level)
             {
+                case 1:
+                    MaxExp = 10;
+                    break;
+
                 case 2:
                     MaxExp = 35;
                     break;
@@ -242,6 +249,7 @@
                 case 5:
                     MaxExp = 0;
                     Console.WriteLine("축하드립니다! 최대 레벨에 도달했습니다!");
+                    Console.ReadKey(true);
                     break;
             }
 
@@ -253,7 +261,8 @@
             Hp = MaxHp;
             Mp = MaxMp;
 
-            Console.WriteLine($"레벨업! 현재 레벨: {Level}, 경험치: {Exp}/{MaxExp}, 공격력: {Attack}, 방어력: {Defense}, HP: {Hp}/{MaxHp}, MP: {Mp}/{MaxMp}");
+            Console.WriteLine("레벨업하셨습니다! 축하드립니다!");
+            Console.ReadKey(true);
         }
 
         public void UsePotion()
@@ -269,64 +278,68 @@
 
                 Potions--;
                 Console.WriteLine("회복을 완료했습니다. 현재 체력: {0}/{1}", Hp, MaxHp);
+                Console.ReadKey(true);
             }
             else
             {
                 Console.WriteLine("포션이 부족합니다.");
+                Console.ReadKey(true);
             }
         }
 
         public void UpdateStatsOnEquip(Item item)
         {
-            Attack += item.itemATK;
-            Defense += item.itemDEF;
+            Attack += item.ItemATK;
+            Defense += item.ItemDEF;
         }
 
         public void UpdateStatsOnUnequip(Item item)
         {
-            Attack -= item.itemATK;
-            Defense -= item.itemDEF;
+            Attack -= item.ItemATK;
+            Defense -= item.ItemDEF;
         }
 
         public void EquipItem(int inputNum, Inventory inventory)
         {
-            if (inputNum < 1 || inputNum > InventoryItems.Count)
+            if (inputNum < 1 || inputNum > equipmentInventory.Count)
             {
                 Console.WriteLine("유효하지 않은 아이템 번호입니다.");
                 return;
             }
 
-            Item item = InventoryItems[inputNum - 1];
-
-            if (item.isArmor)
+            EquipmentItem equipmentItem = equipmentInventory[inputNum - 1];
+            
+            if (equipmentItem.eItemType == EItemType.Armor)
             {
                 if (ArmorEquipment[0] != null)
                 {
                     UpdateStatsOnUnequip(ArmorEquipment[0]);
                 }
-                ArmorEquipment[0] = item;
-                UpdateStatsOnEquip(item);
+                
+                ArmorEquipment[0] = equipmentItem;
+                UpdateStatsOnEquip(equipmentItem);
             }
-            else
+            else if (equipmentItem.eItemType == EItemType.Weapon)
             {
                 if (WeaponEquipment[0] != null)
                 {
                     UpdateStatsOnUnequip(WeaponEquipment[0]);
                 }
-                WeaponEquipment[0] = item;
-                UpdateStatsOnEquip(item);
+               
+                WeaponEquipment[0] = equipmentItem;
+                UpdateStatsOnEquip(equipmentItem);
             }
         }
 
         public int Buy(Item item)
         {
-            Gold -= item.price;
+            Gold -= item.Price;
             return Gold;
         }
 
         public int Sell(Item item)
         {
-            Gold += item.price*85/100;
+            Gold += item.Price*85/100;
             return Gold;
         }
 
@@ -338,6 +351,40 @@
         public void ChangeJob(EJob job)
         {
             Job = job;
+
+            switch (job)
+            {
+                case EJob.전사:
+                    Attack = 10.0;
+                    Defense = 10.0;
+                    MaxHp = 150.0;
+                    MaxMp = 30.0;
+                    MaxExp = 10;
+                    break;
+
+                case EJob.궁수:
+                    Attack = 13.0;
+                    Defense = 7.0;
+                    MaxHp = 120.0;
+                    MaxMp = 60.0;
+                    MaxExp = 10;
+                    break;
+
+                case EJob.마법사:
+                    Attack = 15.0;
+                    Defense = 5.0;
+                    MaxHp = 100.0;
+                    MaxMp = 80.0;
+                    MaxExp = 10;
+                    break;
+
+                default:
+                    Console.WriteLine("알 수 없는 직업입니다.");
+                    break;
+            }
+
+            Hp = MaxHp;
+            Mp = MaxMp;
         }
         
         public void AddGold(int amount)
@@ -345,11 +392,11 @@
             Gold += amount;
         }
 
-        public void AddItem(Item item)
+        public void AddItem(EquipmentItem equipmentItem)
         {
-            if (item != null)
+            if (equipmentItem != null)
             {
-                InventoryItems.Add(item);
+                equipmentInventory.Add(equipmentItem);
             }
             else
             {
@@ -360,6 +407,24 @@
         public void IncrementMonsterKills()
         {
             MonsterKills++;
+        }
+
+        public void SetPlayerData(string name, int level, double attack, double defense, double hp, double maxHp, double mp, double maxMp, int gold, int exp, int maxExp, EJob job, int potions, int monsterKills)
+        {
+            Name = name;
+            Level = level;
+            Attack = attack;
+            Defense = defense;
+            Hp = hp;
+            MaxHp = maxHp;
+            Mp = mp;
+            MaxMp = maxMp;
+            Gold = gold;
+            Exp = exp;
+            MaxExp = maxExp;
+            Job = job;
+            Potions = potions;
+            MonsterKills = monsterKills;
         }
     }
 

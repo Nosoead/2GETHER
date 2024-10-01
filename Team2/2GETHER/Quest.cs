@@ -4,14 +4,14 @@
     {
         public string Title { get; private set; }
         public string Description { get; private set; }
-        public Item ItemReward { get; private set; }
+        public EquipmentItem ItemReward { get; private set; }
         public int GoldReward { get; private set; }
         public Func<int> QuestCondition { get; private set; }
 
         public bool IsAccepted { get; set; }
         public bool IsCompleted { get; set; }
 
-        public QuestInfo(string title, string description, Item itemReward, int goldReward, Func<int> questCondition)
+        public QuestInfo(string title, string description, EquipmentItem itemReward, int goldReward, Func<int> questCondition)
         {
             Title = title;
             Description = description;
@@ -87,9 +87,9 @@
         {
             int equippedCount = 0;
 
-            foreach (var item in player.InventoryItems)
+            foreach (var item in player.equipmentInventory)
             {
-                if (item.isPlayerEquip)
+                if (item.IsPlayerEquip)
                 {
                     equippedCount++;
                 }
@@ -98,15 +98,15 @@
             return equippedCount > 0 ? 1 : 0;
         }
 
-        public Item RandomItemDrop()
+        public EquipmentItem RandomItemDrop()
         {
-            if (itemManager.items.Count == 0)
+            if (itemManager.equipmentItemList.Count == 0)
             {
                 throw new InvalidOperationException("드랍 가능한 아이템이 없습니다.");
             }
 
             int randomIndex = random.Next(0, itemManager.items.Count);
-            return itemManager.items[randomIndex];
+            return itemManager.equipmentItemList[randomIndex];
         }
 
         public int RandomGoldDrop(int minGold, int maxGold)
@@ -246,7 +246,7 @@
             quest.IsCompleted = true;
             acceptedQuests.Remove(quest);
 
-            player.InventoryItems.Add(quest.ItemReward);
+            player.equipmentInventory.Add(quest.ItemReward);
             player.AddGold(quest.GoldReward);
 
             string[] questCompletionInfo = new string[]
