@@ -2,13 +2,13 @@
 {
     class Dungeon
     {
-        int Count = 0;
+        int Count;
         int DeadMonsterCount;
 
         public void StartBattle(Player player, Monster monster, IOManager ioManager, Quest quest) // 던전 전투 시작
         {
             DeadMonsterCount = 0;
-
+            Count = 0;
             monster.CreateMonster();
 
 
@@ -57,22 +57,22 @@
                     $"HP {player.Hp}/{player.MaxHp}",
                     $"MP {player.Mp}/{player.MaxMp}\n"
                 };
-                ioManager.PrintMessage(battleInfo, false, true);
+                ioManager.PrintMessage(battleInfo, false, false);
 
-                atkSelect = ioManager.PrintMessageWithNumberForSelect(atkChoice, false);
+                atkSelect = ioManager.PrintMessageWithNumberForSelect(atkChoice, false, false);
 
                 string[] randomMonstersInfo = GetRandomMonsterInfo(monster, ioManager);
 
                 if (atkSelect == 1)
                 {
-                    monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true,true);
+                    monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true, true);
                     if (monSelect == 0)
                     {
                         return;
                     }
                     else
                     {
-                        ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, monSelect - 1, skillSelect, false), true);
+                        ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, monSelect - 1, skillSelect, false), true, false);
 
                         Console.ReadKey(true);
                     }
@@ -82,7 +82,7 @@
                     string[] playerSkills = { player.GetSkillNameOne(), player.GetSkillNameTwo() };
 
                     ioManager.PrintMessage(battleInfo, false);
-                    skillSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(playerSkills, false,false);
+                    skillSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(playerSkills, false, false);
 
                     if (skillSelect == 0)
                     {
@@ -98,15 +98,15 @@
                         }
                         else
                         {
-                            ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, monSelect - 1, skillSelect, true), true);
+                            ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, monSelect - 1, skillSelect, true), true, false);
                             Console.ReadKey(true);
                         }
                     }
                     else if (skillSelect == 2)
                     {
-                        ioManager.PrintMessage(randomMonstersInfo, true);
-                        ioManager.PrintMessage(battleInfo, false);
-                        ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, 0, skillSelect, true), true);
+                        ioManager.PrintMessage(randomMonstersInfo, true, true);
+                        ioManager.PrintMessage(battleInfo, false, false);
+                        ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, 0, skillSelect, true), true, false);
                         Console.ReadKey(true);
                     }
                 }
@@ -117,7 +117,7 @@
                 {
                     if (monster.monsters[i].Hp > 0)
                     {
-                        ioManager.PrintMessage(MonsterTurn(player, monster, i, ioManager), true);
+                        ioManager.PrintMessage(MonsterTurn(player, monster, i, ioManager), true, false);
                         Console.ReadKey(true);
                     }
                 }
@@ -131,7 +131,7 @@
 
             if (monster.monsters[monSelect].Hp <= 0)
             {
-                string[] againPlayerTurn = 
+                string[] againPlayerTurn =
                 {
                     $"\n{monster.monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
                     "",
@@ -139,14 +139,14 @@
                     "",
                     ">>"
                 };
-                
+
                 string[] randomMonstersInfo = GetRandomMonsterInfo(monster, ioManager);
-                ioManager.PrintMessage(againPlayerTurn);
+                ioManager.PrintMessage(againPlayerTurn, false, false);
                 Console.ReadKey();
-                int newMonSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, true,true);
-                return PlayerTurn(player, monster, ioManager, newMonSelect - 1, skillSelect, isSkillUsed); 
-                
-            
+                int newMonSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, true, true);
+                return PlayerTurn(player, monster, ioManager, newMonSelect - 1, skillSelect, isSkillUsed);
+
+
 
             }
 
@@ -168,22 +168,30 @@
                 string areaAttackMsg = $"Lv.{player.Level} {player.Name} 의 {AreaAttackName}\n";
 
 
-                foreach (var target in attackedMonster)
+                if (player.Mp < 9)
                 {
-                    if (target.Hp<=0)
+                    areaAttackMsg += "마나가 부족하여 스킬을 사용할 수 없습니다.\n";
+                }
+                else
+                {
+
+                    foreach (var target in attackedMonster)
                     {
-                        DeadMonsterCount++;
-                        player.IncrementMonsterKills();
+                        if (target.Hp <= 0)
+                        {
+                            DeadMonsterCount++;
+                            player.IncrementMonsterKills();
+                        }
+
+
+                        string status = (target.Hp == 0) ? "Dead" : target.Hp.ToString();
+
+                        areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + damage} -> {status}[ 데미지 : {damage}]\n";
+
                     }
-                    
-
-                    string status = (target.Hp == 0) ? "Dead" : target.Hp.ToString();
-
-                    areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + damage} -> {status}[ 데미지 : {damage}]\n";
-
                 }
                 attackedMonster.Clear();
-                
+
 
 
                 return new string[]
@@ -192,8 +200,6 @@
                     "Battle!!",
                     "",
                     $"{areaAttackMsg}",
-                    "",
-
                     "",
                     "계속 하려면 아무키나 입력해주세요.",
                     "",
@@ -215,8 +221,9 @@
 
             string criticalHitMessage = (damage == player.Attack * 1.6) ? "치명타 공격!!" : "";
 
-            string attackMessage = (damage == 0)
+            string attackMessage = (damage == 0 && player.Mp > 9)
              ? $"{monster.monsters[monSelect].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
+             : (damage == 0 && player.Mp < 9) ? $"마나가 부족하여 스킬을 사용할 수 없습니다."
              : $"{monster.monsters[monSelect].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
 
             string[] playerTurn = new string[]
@@ -289,7 +296,7 @@
 
             }
 
-            ioManager.PrintMessage(randomMonstersInfo, true,true);
+            ioManager.PrintMessage(randomMonstersInfo, true, true);
             return randomMonstersInfo;
         }
         public void BattleResult(int result, Player player, Monster monster, IOManager ioManager, Quest quest) // 전투결과
@@ -322,11 +329,11 @@
                     ">>"
                 };
 
-                ioManager.PrintMessage(winMessage, true);
+                ioManager.PrintMessage(winMessage, true, false);
 
                 Console.ReadKey(true);
-                
-                GiveDungeonReward(player, quest, ioManager);       
+
+                GiveDungeonReward(player, quest, ioManager);
             }
 
             else if (result == 2)// 패배
@@ -342,9 +349,9 @@
                     "",
                     "계속 하려면 아무키나 입력해주세요.",
                     "",
-                ">>"
+                    ">>"
                 };
-                ioManager.PrintMessage(loseMessage, true);
+                ioManager.PrintMessage(loseMessage, true, false);
 
                 Console.ReadKey(true);
             }
@@ -367,15 +374,17 @@
             // 보상 출력
             string[] rewardMessage = new string[]
             {
-        "던전 클리어 보상",
-        "",
-        $"아이템: {randomItem.eItem}",
-        $"골드: {randomGold} G",
-        "",
-        "아무키나 눌러주시면 메인화면으로 이동하겠습니다."
+                "던전 클리어 보상",
+                "",
+                $"아이템: {randomItem.eItem}",
+                $"골드: {randomGold} G",
+                "",
+                "계속 하려면 아무키나 입력해주세요.",
+                "",
+                ">>"
             };
 
-            ioManager.PrintMessage(rewardMessage, true);
+            ioManager.PrintMessage(rewardMessage, true, false);
             Console.ReadKey(true);
         }
     }
