@@ -5,7 +5,7 @@
         int Count = 0;
         int DeadMonsterCount;
 
-        public void StartBattle(Player player, Monster monster, IOManager ioManager) // 던전 전투 시작
+        public void StartBattle(Player player, Monster monster, IOManager ioManager, Quest quest) // 던전 전투 시작
         {
             DeadMonsterCount = 0;
 
@@ -27,12 +27,12 @@
 
             if (monster.monsters.Count == DeadMonsterCount)
             {
-                BattleResult(1, player, monster, ioManager); // 전투결과 승리로 이동
+                BattleResult(1, player, monster, ioManager, quest); // 전투결과 승리로 이동
                 return;
             }
             if (player.Hp == 0)
             {
-                BattleResult(2, player, monster, ioManager); // 전투결과 패배로 이동
+                BattleResult(2, player, monster, ioManager, quest); // 전투결과 패배로 이동
                 return;
             }
 
@@ -292,7 +292,7 @@
             ioManager.PrintMessage(randomMonstersInfo, true,true);
             return randomMonstersInfo;
         }
-        public void BattleResult(int result, Player player, Monster monster, IOManager ioManager) // 전투결과
+        public void BattleResult(int result, Player player, Monster monster, IOManager ioManager, Quest quest) // 전투결과
         {
             if (result == 1) // 승리
             {
@@ -325,8 +325,10 @@
                 ioManager.PrintMessage(winMessage, true);
 
                 Console.ReadKey(true);
-
+                
+                GiveDungeonReward(player, quest, ioManager);       
             }
+
             else if (result == 2)// 패배
             {
                 string[] loseMessage =
@@ -346,6 +348,35 @@
 
                 Console.ReadKey(true);
             }
+        }
+
+        public void GiveDungeonReward(Player player, Quest quest, IOManager ioManager)
+        {
+            // 랜덤 아이템 드랍
+            EquipmentItem randomItem = quest.RandomItemDrop(); // Quest 클래스의 RandomItemDrop 사용
+            EquipmentItem selectItem = randomItem;
+            player.equipmentInventory.Add(randomItem);
+            selectItem.AddCount();
+            if (!player.equipmentInventory.Contains(selectItem))
+            { player.equipmentInventory.Add(selectItem); }
+
+            // 랜덤 골드 드랍 (1000 ~ 5000 골드 사이)
+            int randomGold = quest.RandomGoldDrop(1000, 5000); // Quest 클래스의 RandomGoldDrop 사용
+            player.AddGold(randomGold);
+
+            // 보상 출력
+            string[] rewardMessage = new string[]
+            {
+        "던전 클리어 보상",
+        "",
+        $"아이템: {randomItem.eItem}",
+        $"골드: {randomGold} G",
+        "",
+        "아무키나 눌러주시면 메인화면으로 이동하겠습니다."
+            };
+
+            ioManager.PrintMessage(rewardMessage, true);
+            Console.ReadKey(true);
         }
     }
 }

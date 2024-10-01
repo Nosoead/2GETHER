@@ -117,7 +117,7 @@
 
         public void Dungeon()
         {
-            dungeon.StartBattle(player, monster, ioManager);
+            dungeon.StartBattle(player, monster, ioManager, quest);
         }
 
         public void Quest()
