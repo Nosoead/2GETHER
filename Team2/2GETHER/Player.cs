@@ -338,6 +338,37 @@
         public void ChangeJob(EJob job)
         {
             Job = job;
+
+            switch (job)
+            {
+                case EJob.전사:
+                    Attack = 10.0;
+                    Defense = 10.0;
+                    MaxHp = 150.0;
+                    MaxMp = 30.0;
+                    break;
+
+                case EJob.궁수:
+                    Attack = 13.0;
+                    Defense = 7.0;
+                    MaxHp = 120.0;
+                    MaxMp = 60.0;
+                    break;
+
+                case EJob.마법사:
+                    Attack = 15.0;
+                    Defense = 5.0;
+                    MaxHp = 100.0;
+                    MaxMp = 80.0;
+                    break;
+
+                default:
+                    Console.WriteLine("알 수 없는 직업입니다.");
+                    break;
+            }
+
+            Hp = MaxHp;
+            Mp = MaxMp;
         }
         
         public void AddGold(int amount)
@@ -360,6 +391,24 @@
         public void IncrementMonsterKills()
         {
             MonsterKills++;
+        }
+
+        public void SetPlayerData(string name, int level, double attack, double defense, double hp, double maxHp, double mp, double maxMp, int gold, int exp, int maxExp, EJob job, int potions, int monsterKills)
+        {
+            Name = name;
+            Level = level;
+            Attack = attack;
+            Defense = defense;
+            Hp = hp;
+            MaxHp = maxHp;
+            Mp = mp;
+            MaxMp = maxMp;
+            Gold = gold;
+            Exp = exp;
+            MaxExp = maxExp;
+            Job = job;
+            Potions = potions;
+            MonsterKills = monsterKills;
         }
     }
 
