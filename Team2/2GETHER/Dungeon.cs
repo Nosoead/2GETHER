@@ -11,20 +11,14 @@
 
             monster.CreateMonster();
 
-            GetRandomMonsterInfo(monster, ioManager);
 
-
-            string[] battleInfo =
-            {
-                "\n[내정보]\n",
-                $"Lv.{player.Level}  {player.Name}  ({player.Job})",
-                $"HP {player.Hp}/{player.MaxHp}",
-                $"MP {player.Mp}/{player.MaxMp}\n"
-            };
-
-
-            ioManager.PrintMessage(battleInfo, false);
-
+            //string[] battleInfo =
+            //{
+            //    "\n[내정보]\n",
+            //    $"Lv.{player.Level}  {player.Name}  ({player.Job})",
+            //    $"HP {player.Hp}/{player.MaxHp}",
+            //    $"MP {player.Mp}/{player.MaxMp}\n"
+            //};
 
             while (player.Hp > 0 && monster.monsters.Count > DeadMonsterCount)
             {
@@ -54,6 +48,7 @@
             {
                 string[] atkChoice = { "공격", "스킬" };
 
+                GetRandomMonsterInfo(monster, ioManager);
 
                 string[] battleInfo =
                 {
@@ -62,6 +57,7 @@
                     $"HP {player.Hp}/{player.MaxHp}",
                     $"MP {player.Mp}/{player.MaxMp}\n"
                 };
+                ioManager.PrintMessage(battleInfo, false, true);
 
                 atkSelect = ioManager.PrintMessageWithNumberForSelect(atkChoice, false);
 
@@ -69,7 +65,7 @@
 
                 if (atkSelect == 1)
                 {
-                    monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true);
+                    monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true,true);
                     if (monSelect == 0)
                     {
                         return;
@@ -78,7 +74,7 @@
                     {
                         ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, monSelect - 1, skillSelect, false), true);
 
-                        Console.ReadKey();
+                        Console.ReadKey(true);
                     }
                 }
                 else if (atkSelect == 2)
@@ -86,7 +82,7 @@
                     string[] playerSkills = { player.GetSkillNameOne(), player.GetSkillNameTwo() };
 
                     ioManager.PrintMessage(battleInfo, false);
-                    skillSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(playerSkills, false);
+                    skillSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(playerSkills, false,false);
 
                     if (skillSelect == 0)
                     {
@@ -94,7 +90,7 @@
                     }
                     if (skillSelect == 1)
                     {
-                        monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true);
+                        monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true, true);
 
                         if (monSelect == 0)
                         {
@@ -103,7 +99,7 @@
                         else
                         {
                             ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, monSelect - 1, skillSelect, true), true);
-                            Console.ReadKey();
+                            Console.ReadKey(true);
                         }
                     }
                     else if (skillSelect == 2)
@@ -111,7 +107,7 @@
                         ioManager.PrintMessage(randomMonstersInfo, true);
                         ioManager.PrintMessage(battleInfo, false);
                         ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, 0, skillSelect, true), true);
-                        Console.ReadKey();
+                        Console.ReadKey(true);
                     }
                 }
             }
@@ -122,7 +118,7 @@
                     if (monster.monsters[i].Hp > 0)
                     {
                         ioManager.PrintMessage(MonsterTurn(player, monster, i, ioManager), true);
-                        Console.ReadKey();
+                        Console.ReadKey(true);
                     }
                 }
             }
@@ -135,17 +131,23 @@
 
             if (monster.monsters[monSelect].Hp <= 0)
             {
-
-                return new string[]
+                string[] againPlayerTurn = 
                 {
-                    "Battle!!",
+                    $"\n{monster.monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
                     "",
-                    $"{monster.monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
-                    "",
-                    "0. 다음",
+                    "다른 몬스터를 선택하세요.",
                     "",
                     ">>"
                 };
+                
+                string[] randomMonstersInfo = GetRandomMonsterInfo(monster, ioManager);
+                ioManager.PrintMessage(againPlayerTurn);
+                Console.ReadKey();
+                int newMonSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, true,true);
+                return PlayerTurn(player, monster, ioManager, newMonSelect - 1, skillSelect, isSkillUsed); 
+                
+            
+
             }
 
             double previousHp = monster.monsters[monSelect].Hp;
@@ -165,23 +167,35 @@
 
                 string areaAttackMsg = $"Lv.{player.Level} {player.Name} 의 {AreaAttackName}\n";
 
+
                 foreach (var target in attackedMonster)
                 {
+                    if (target.Hp<=0)
+                    {
+                        DeadMonsterCount++;
+                        player.IncrementMonsterKills();
+                    }
+                    
+
                     string status = (target.Hp == 0) ? "Dead" : target.Hp.ToString();
 
                     areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + damage} -> {status}[ 데미지 : {damage}]\n";
+
                 }
                 attackedMonster.Clear();
+                
+
 
                 return new string[]
                 {
+
                     "Battle!!",
                     "",
                     $"{areaAttackMsg}",
                     "",
 
                     "",
-                    "0. 다음",
+                    "계속 하려면 아무키나 입력해주세요.",
                     "",
                     ">>"
                 };
@@ -215,7 +229,7 @@
                 $"Lv.{monster.monsters[monSelect].Level} {monster.monsters[monSelect].Name}",
                 $"HP {previousHp} -> {hpInfo}",
                 "",
-                "0. 다음",
+                "계속 하려면 아무키나 입력해주세요.",
                 "",
                 ">>",
             };
@@ -241,7 +255,7 @@
                 $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {damage} ]",
                 $"HP {previousHp} ->{currentHp}",
                 "",
-                "0. 다음",
+                "계속 하려면 아무키나 입력해주세요.",
                 "",
                 ">>",
             };
@@ -251,15 +265,31 @@
         public string[] GetRandomMonsterInfo(Monster monster, IOManager ioManager) // 랜덤한 몬스터의 정보를 불러옵니다.
         {
             string[] randomMonstersInfo = new string[monster.monsters.Count];
+
             for (int i = 0; i < monster.monsters.Count; i++)
             {
 
                 string monsterHpDisplay = (monster.monsters[i].Hp == 0) ? "Dead" : $"HP {monster.monsters[i].Hp.ToString()}";
                 randomMonstersInfo[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} {monsterHpDisplay}";
 
+                //if (monster.monsters[i].Hp <= 0)
+                //{
+                //    Console.ForegroundColor = ConsoleColor.DarkGray;
+                //}
+                //else
+                //{
+                //    Console.ForegroundColor = ConsoleColor.White; 
+                //}
+
+                //ioManager.PrintMessage(new string[] { randomMonstersInfo[i] }, true);
+
+
+                //Console.ResetColor();
+
+
             }
 
-            ioManager.PrintMessage(randomMonstersInfo, true);
+            ioManager.PrintMessage(randomMonstersInfo, true,true);
             return randomMonstersInfo;
         }
         public void BattleResult(int result, Player player, Monster monster, IOManager ioManager) // 전투결과
@@ -287,7 +317,6 @@
                     $"HP {player.MaxHp} -> {player.Hp}",
                     $"exp {previousExp} -> {currentExp}",
                     "",
-                    "",
                     "계속 하려면 아무키나 입력해주세요.",
                     "",
                     ">>"
@@ -295,7 +324,7 @@
 
                 ioManager.PrintMessage(winMessage, true);
 
-                Console.ReadKey();
+                Console.ReadKey(true);
 
             }
             else if (result == 2)// 패배
@@ -315,7 +344,7 @@
                 };
                 ioManager.PrintMessage(loseMessage, true);
 
-                Console.ReadKey();
+                Console.ReadKey(true);
             }
         }
     }
