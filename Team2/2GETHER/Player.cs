@@ -15,6 +15,7 @@
         public int MaxExp { get; private set; }
         public EJob Job { get; private set; }
         public int Potions { get; private set; }
+        public int MonsterKills { get; private set; }
 
         private const int MaxLevel = 5;
 
@@ -25,7 +26,8 @@
         public Item[] ArmorEquipment = new Item[1];
         public List<Item> InventoryItems { get; private set; }  = new List<Item>();
 
-        List<Monster> AttackedMonster;
+        List<Monster> AttackedMonster = new List<Monster>();
+
 
         public Player()
         {
@@ -42,7 +44,7 @@
             MaxExp = 100;
             Job = EJob.전사;
             Potions = 3;
-            AttackedMonster = new List<Monster>();
+            MonsterKills = 0;
         }
 
         public Player(string name, EJob job)
@@ -60,6 +62,7 @@
             Exp = 0;
             MaxExp = 100;
             Potions = 3;
+            MonsterKills = 0;
         }
 
         public double AttackWithEffects()
@@ -79,11 +82,13 @@
             return damage;
         }
 
-        public void PlayerAttack(Monster monster)
+        public double PlayerAttack(Monster monster)
         {
             double damage = AttackWithEffects();
 
             monster.MonsterDamageTaken(damage);
+
+            return damage;
         }
 
         public void PlayerDamageTaken(double damage)
@@ -161,13 +166,13 @@
             switch (Job)
             {
                 case EJob.전사:
-                    return "강타 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.";
+                    return "강타 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 case EJob.마법사:
-                    return "화염구 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.";
+                    return "화염구 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 case EJob.궁수:
-                    return "속사 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.";
+                    return "속사 - MP 10\n공격력 * 2 로 하나의 적을 공격합니다.\n";
 
                 default:
                     return "기본 공격";
@@ -179,13 +184,13 @@
             switch (Job)
             {
                 case EJob.전사:
-                    return "폭풍 가르기 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.";
+                    return "폭풍 가르기 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.\n";
 
                 case EJob.마법사:
-                    return "얼음 폭풍 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.";
+                    return "얼음 폭풍 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.\n";
 
                 case EJob.궁수:
-                    return "연속 사격 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.";
+                    return "연속 사격 - MP 15\n공격력 * 1.5 로 2명의 적을 랜덤으로 공격합니다.\n";
 
                 default:
                     return "기본 공격";
@@ -333,13 +338,79 @@
         public void ChangeJob(EJob job)
         {
             Job = job;
+
+            switch (job)
+            {
+                case EJob.전사:
+                    Attack = 10.0;
+                    Defense = 10.0;
+                    MaxHp = 150.0;
+                    MaxMp = 30.0;
+                    break;
+
+                case EJob.궁수:
+                    Attack = 13.0;
+                    Defense = 7.0;
+                    MaxHp = 120.0;
+                    MaxMp = 60.0;
+                    break;
+
+                case EJob.마법사:
+                    Attack = 15.0;
+                    Defense = 5.0;
+                    MaxHp = 100.0;
+                    MaxMp = 80.0;
+                    break;
+
+                default:
+                    Console.WriteLine("알 수 없는 직업입니다.");
+                    break;
+            }
+
+            Hp = MaxHp;
+            Mp = MaxMp;
         }
         
         public void AddGold(int amount)
         {
             Gold += amount;
         }
+
+        public void AddItem(Item item)
+        {
+            if (item != null)
+            {
+                InventoryItems.Add(item);
+            }
+            else
+            {
+                Console.WriteLine("잘못된 아이템입니다.");
+            }
+        }
+
+        public void IncrementMonsterKills()
+        {
+            MonsterKills++;
+        }
+
+        public void SetPlayerData(string name, int level, double attack, double defense, double hp, double maxHp, double mp, double maxMp, int gold, int exp, int maxExp, EJob job, int potions, int monsterKills)
+        {
+            Name = name;
+            Level = level;
+            Attack = attack;
+            Defense = defense;
+            Hp = hp;
+            MaxHp = maxHp;
+            Mp = mp;
+            MaxMp = maxMp;
+            Gold = gold;
+            Exp = exp;
+            MaxExp = maxExp;
+            Job = job;
+            Potions = potions;
+            MonsterKills = monsterKills;
+        }
     }
 
-    public enum EJob { 전사, 궁수, 마법사, 공용 }
+    public enum EJob { 공용, 전사, 궁수, 마법사 }
 }

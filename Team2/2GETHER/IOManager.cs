@@ -16,12 +16,13 @@
             "인벤토리",
             "상점",
             "던전 입장",
-            "임시 테스트"
+            "퀘스트",
+            "저장/불러오기"
         };
 
-        public void PrintDebugMessage()
+        public void PrintDebugMessage(string message = "디버그용 출력 메세지입니다.")
         {
-            Console.WriteLine("디버그용 출력 메세지입니다.");
+            Console.WriteLine(message);
             Console.ReadKey();
         }
 
