@@ -152,12 +152,20 @@ namespace _2GETHER
                 if (!File.Exists(FileName))
                 {
                     FileLoadingMessage.Add("빈 슬롯");
-                    return;
+                    continue;
+                }
+                else
+                {
+                    //string 
                 }
             }
 
-            fileSelect = ioManager.PrintMessageWithNumberForSelect(FileLoadingMessage.ToArray(), true);
-            Console.ReadLine();
+            fileSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(FileLoadingMessage.ToArray(), true);
+
+            /*if (fileSelect == 0)
+            {
+                return;
+            }*/
             /*if (!File.Exists(saveFileName))
             {
                 ioManager.PrintDebugMessage("저장된 게임 데이터가 없습니다.");

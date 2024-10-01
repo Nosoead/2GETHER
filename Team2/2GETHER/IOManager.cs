@@ -1,4 +1,6 @@
-﻿namespace _2GETHER
+﻿using System.Drawing;
+
+namespace _2GETHER
 {
     class IOManager
     {
@@ -20,6 +22,15 @@
             "저장/불러오기"
         };
 
+        public Dictionary<string, ConsoleColor> MessageColor = new Dictionary<string, ConsoleColor>();
+
+        public void InitializeMessageColors()
+        {
+            MessageColor["상태 보기"] = ConsoleColor.DarkYellow;
+            MessageColor["Battle"] = ConsoleColor.Red;
+            MessageColor["Dead"] = ConsoleColor.DarkGray;
+        }
+
         public void PrintDebugMessage(string message = "디버그용 출력 메세지입니다.")
         {
             Console.WriteLine(message);
@@ -37,13 +48,20 @@
             Console.WriteLine();
         }
 
-        public int PrintMessageAndSelectNum(string message, int maxNumber)
+        public int PrintMessageAndSelectNum(string message, int maxNumber, bool applyColor = false)
         {
             int select = -1;
 
             while (true)
             {
-                Console.WriteLine($"{message}");
+                if (applyColor)
+                {
+                    PrintWithColor(message);
+                }
+                else
+                {
+                    Console.WriteLine(message);
+                }
 
                 try
                 {
@@ -68,17 +86,24 @@
             return select;
         }
 
-        public void PrintMessage(string message, bool Clear = false)
+        public void PrintMessage(string message, bool Clear = false, bool applyColor = false)
         {
             if (Clear)
             {
                 Console.Clear();
             }
 
-            Console.WriteLine(message);
+            if (applyColor)
+            {
+                PrintWithColor(message);
+            }
+            else
+            {
+                Console.WriteLine(message);
+            }
         }
 
-        public void PrintMessage(string[] messages, bool Clear = false)
+        public void PrintMessage(string[] messages, bool Clear = false, bool applyColor = false)
         {
             if (Clear)
             {
@@ -87,11 +112,18 @@
 
             foreach (var message in messages)
             {
-                Console.WriteLine(message);
+                if (applyColor)
+                {
+                    PrintWithColor(message);
+                }
+                else
+                {
+                    Console.WriteLine(message);
+                }
             }
         }
 
-        public void PrintMessageWithNumberNoSelect(string[] messages, bool Clear = false)
+        public void PrintMessageWithNumberNoSelect(string[] messages, bool Clear = false, bool applyColor = false)
         {
             if (Clear)
             {
@@ -101,11 +133,15 @@
             for (int i = 0; i < messages.Length; i++)
             {
                 string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
-                Console.WriteLine(printMessage);
+
+                if (applyColor)
+                    PrintWithColor(printMessage);
+                else
+                    Console.WriteLine(printMessage);
             }
         }
 
-        public int PrintMessageWithNumberForSelect(string[] messages, bool Clear = true)
+        public int PrintMessageWithNumberForSelect(string[] messages, bool Clear = true, bool applyColor = false)
         {
             int selectNumber = 0;
 
@@ -119,7 +155,11 @@
                 for (int i = 0; i < messages.Length; i++)
                 {
                     string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
-                    Console.WriteLine(printMessage);
+
+                    if (applyColor)
+                        PrintWithColor(printMessage);
+                    else 
+                        Console.WriteLine(printMessage);
                 }
 
                 Console.WriteLine("\n원하는 행동을 입력해주세요 : \n");
@@ -149,7 +189,7 @@
             return selectNumber;
         }
 
-        public int PrintMessageWithNumberForSelectZeroExit(string[] messages, bool Clear = true)
+        public int PrintMessageWithNumberForSelectZeroExit(string[] messages, bool Clear = true, bool applyColor = false)
         {
             int selectNumber = 0;
 
@@ -163,7 +203,11 @@
                 for (int i = 0; i < messages.Length; i++)
                 {
                     string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
-                    Console.WriteLine(printMessage);
+
+                    if (applyColor)
+                        PrintWithColor(printMessage);
+                    else
+                        Console.WriteLine(printMessage);
                 }
 
                 Console.WriteLine("\n0. 취소/나가기");
@@ -195,7 +239,7 @@
             return selectNumber;
         }
 
-        public int PrintMessageWithNumberForSelectZeroExit(string[] messages, string[] centerMessage ,bool Clear = true)
+        public int PrintMessageWithNumberForSelectZeroExit(string[] messages, string[] centerMessage ,bool Clear = true, bool applyColor = false)
         {
             int selectNumber = 0;
 
@@ -209,7 +253,21 @@
                 for (int i = 0; i < messages.Length; i++)
                 {
                     string printMessage = string.Format("{0}. {1}", i + 1, messages[i]);
+
+                    if (applyColor)
+                        PrintWithColor(printMessage);
+                    else
+                        Console.WriteLine(printMessage);
+
+                    /*//죽은 몬스터일 경우
+                    if (printMessage.Contains("Dead"))
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                    }
+
                     Console.WriteLine(printMessage);
+
+                    Console.ResetColor();*/
                 }
 
                 PrintConsoleLine();
@@ -242,6 +300,31 @@
             }
 
             return selectNumber;
+        }
+
+        
+        public void PrintWithColor(string message)
+        {
+            ConsoleColor color = CheckMessageReturnColor(message);
+
+            Console.ForegroundColor = color;
+
+            Console.WriteLine(message);
+
+            Console.ResetColor();
+        }
+
+        public ConsoleColor CheckMessageReturnColor(string message)
+        {
+            foreach (var key in MessageColor.Keys)
+            {
+                if (message.ToLower().Contains(key.ToLower()))
+                {
+                    return MessageColor[key];
+                }
+            }
+
+            return ConsoleColor.White;
         }
     }
 }
