@@ -12,18 +12,19 @@
 
     class GameManager
     {
-        public Player player = new Player();
-        public ItemManager itemManager = new ItemManager();
-
         Quest quest;
+        DataManager dataManager;
+
+        Store store = new Store();
         Intro intro = new Intro();
         Status status = new Status();
         Monster monster = new Monster();
         Dungeon dungeon = new Dungeon();
         IOManager ioManager = new IOManager();
-        Store store = new Store();
         Inventory inventory = new Inventory();
-        DataManager dataManager;
+
+        public Player player = new Player();
+        public ItemManager itemManager = new ItemManager();
 
         public GameManager ()
         {
@@ -74,12 +75,16 @@
                     Dungeon();
                     break;
 
+                //퀘스트
                 case 5:
                     Quest();
                     break;
 
+                //저장 불러오기 제작중
                 case 6:
-                    //저장하기 or 불러오기
+                    dataManager.SaveData();
+                    ioManager.PrintMessage("저장 완료");
+                    ioManager.PlzInputAnyKey();
                     break;
 
                 case 7:

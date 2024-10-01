@@ -32,8 +32,8 @@ namespace _2GETHER
             saveData.Exp = currentPlayer.Exp;
             saveData.MaxExp = currentPlayer.MaxExp;
             saveData.Job = currentPlayer.Job.ToString();
-            saveData.EquippedWeapon = currentPlayer.EquippedWeapon;
-            saveData.EquippedArmor = currentPlayer.EquippedArmor;
+            //saveData.EquippedWeapon = currentPlayer.WeaponEquipment[0];
+            //saveData.EquippedArmor = currentPlayer.EquippedArmor;
             saveData.Potions = currentPlayer.Potions;
             saveData.WeaponEquipment = currentPlayer.WeaponEquipment[0]?.eItem.ToString();
             saveData.ArmorEquipment = currentPlayer.ArmorEquipment[0]?.eItem.ToString();
