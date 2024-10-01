@@ -14,6 +14,7 @@
     {
         Quest quest;
         DataManager dataManager;
+        Dungeon dungeon;
 
         Store store = new Store();
         Intro intro = new Intro();
@@ -31,6 +32,7 @@
             dataManager = new DataManager(this, ioManager);
             quest = new Quest(itemManager, player);
             ioManager.InitializeMessageColors();
+            dungeon = new Dungeon(quest, player);
         }
 
         public void GameStart()
@@ -100,7 +102,7 @@
 
         public void Status()
         {
-            status.GetStatusInfo(player, ioManager);
+            status.GetStatusInfo(player, ioManager, inventory);
         }
 
         public void Inventory()

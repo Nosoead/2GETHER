@@ -49,7 +49,7 @@
                     "장비를 착용하면 능력치가 증가합니다.\n" +
                     "더욱 강력한 전투를 위해 장비를 활용하세요!",
                     RandomItemDrop(),
-                    RandomGoldDrop(1, 500),
+                    RandomGoldDrop(100, 500),
                     () => IsPlayerEquip()),
 
                 new QuestInfo("전설의 사냥꾼!",
@@ -58,7 +58,7 @@
                     "당신의 실력을 증명할 기회입니다.\n" +
                     "이제 진정한 사냥꾼으로 거듭나세요!",
                     RandomItemDrop(),
-                    RandomGoldDrop(100, 300),
+                    RandomGoldDrop(1000, 2000),
                     () => player.MonsterKills),
 
                 new QuestInfo("나는 이제 초싸이언?",
@@ -67,7 +67,7 @@
                     "적을 물리치고 필요한 능력치를 채워야 합니다.\n" +
                     "강해지는 것은 항상 즐거운 일입니다. 힘을 증명하세요!",
                     RandomItemDrop(),
-                    RandomGoldDrop(200, 400),
+                    RandomGoldDrop(2000, 4000),
                     () => ((int)(player.Attack + player.Defense))),
 
                 new QuestInfo("부자가 될꺼야!",
@@ -76,7 +76,7 @@
                     "모든 적을 처치하고 많은 보상을 받으세요.\n" +
                     "당신의 꿈을 이루는 첫 걸음이 될 것입니다!",
                     RandomItemDrop(),
-                    RandomGoldDrop(500, 1000),
+                    RandomGoldDrop(1000, 5000),
                     () => player.Gold)
             };
 
@@ -105,7 +105,7 @@
                 throw new InvalidOperationException("드랍 가능한 아이템이 없습니다.");
             }
 
-            int randomIndex = random.Next(0, itemManager.items.Count);
+            int randomIndex = random.Next(0, itemManager.equipmentItemList.Count);
             return itemManager.equipmentItemList[randomIndex];
         }
 
@@ -246,7 +246,12 @@
             quest.IsCompleted = true;
             acceptedQuests.Remove(quest);
 
+            EquipmentItem selectItem = quest.ItemReward;
+
             player.equipmentInventory.Add(quest.ItemReward);
+            selectItem.AddCount();
+            if (!player.equipmentInventory.Contains(selectItem))
+            { player.equipmentInventory.Add(selectItem); }
             player.AddGold(quest.GoldReward);
 
             string[] questCompletionInfo = new string[]

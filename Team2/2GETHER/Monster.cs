@@ -25,9 +25,14 @@
             Attack = attack;
         }
         
-        public void MonsterDamageTaken(double damage)
+        public void MonsterDamageTaken(double baseDamage)
         {
-            Hp -= damage;
+            double errorDamage = Math.Ceiling(baseDamage * 0.1);
+
+            Random random = new Random();
+            double finalDamage = baseDamage + random.Next(-(int)errorDamage, (int)errorDamage + 1);
+
+            Hp -= finalDamage;
 
             if (Hp < 0) Hp = 0;
         }
@@ -64,21 +69,21 @@
 
     class Goblin : Monster
     {
-        public Goblin() : base("고블린", 1, 50, 10) { }
+        public Goblin() : base("고블린", 1, 10, 5) { }
     }
 
     class Oak : Monster
     {
-        public Oak() : base("오크", 2, 70, 15) { }
+        public Oak() : base("오크", 2, 20, 10) { }
     }
 
     class Ooger : Monster
     {
-        public Ooger() : base("오우거", 3, 90, 20) { }
+        public Ooger() : base("오우거", 3, 30, 15) { }
     }
 
     class GoblinKing : Monster
     {
-        public GoblinKing() : base("고블린킹", 5, 120, 25) { }
+        public GoblinKing() : base("고블린킹", 5, 50, 20) { }
     }
 }
