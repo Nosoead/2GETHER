@@ -288,7 +288,7 @@
                 ItemCount: 0,
                 IsArmor: true,
                 IsPlayerEquip: false,
-                ItemDescription: "스파르타의 전사들이 사용한 전설의 가죽갑옷입니다."
+                ItemDescription: "스파르타의 궁수들이 사용한 전설의 가죽갑옷입니다."
              ));
             #endregion
             #region // 마법사아이템 생성 리스트
