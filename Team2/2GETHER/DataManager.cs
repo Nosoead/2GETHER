@@ -10,7 +10,7 @@ namespace _2GETHER
     {
         readonly int FileMaxCount = 5;
         string saveFileName = "savegame.json";
-        List <string> FileLoadingMessage = new List<string>();
+        List<string> FileLoadingMessage = new List<string>();
 
         IOManager ioManager;
         Player? currentPlayer;
@@ -49,29 +49,26 @@ namespace _2GETHER
             saveData.Exp = currentPlayer.Exp;
             saveData.MaxExp = currentPlayer.MaxExp;
             saveData.Job = currentPlayer.Job.ToString();
-            //saveData.EquippedWeapon = currentPlayer.WeaponEquipment[0];
-            //saveData.EquippedArmor = currentPlayer.EquippedArmor;
             saveData.Potions = currentPlayer.Potions;
             saveData.MonsterKills = currentPlayer.MonsterKills;
             saveData.WeaponEquipment = currentPlayer.WeaponEquipment[0]?.eItem.ToString();
             saveData.ArmorEquipment = currentPlayer.ArmorEquipment[0]?.eItem.ToString();
 
-            List<string> soldItems = new List<string>();
-            foreach (Item item in currentItemManager?.items)
-            {
-                /*if (item.isPlayerBuy)
-                {
-                    soldItems.Add(item.eItem.ToString());
-                }*/
-            }
-            saveData.SoldItems = soldItems;
+            saveData.EquipmentInventory = new Dictionary<string, int>();
+            saveData.ConsumableInventory = new Dictionary<string, int>();
 
-            List<string> inventoryItems = new List<string>();
-            /*foreach (var item in currentPlayer.InventoryItems)
+            foreach (var item in currentPlayer.equipmentInventory)
             {
-                inventoryItems.Add(item.eItem.ToString());
-            }*/
-            saveData.InventoryItems = inventoryItems;
+                saveData.EquipmentInventory.Add(item.eItem.ToString(), item.ItemCount);
+            }
+
+            /*Console.WriteLine(saveData.EquipmentInventory.Count);
+            Console.ReadKey(true);*/
+
+            foreach (var item in currentPlayer.consumableInventory)
+            {
+                saveData.ConsumableInventory.Add(item.eItem.ToString(), item.ItemCount);
+            }
 
             var options = new JsonSerializerOptions
             {
@@ -124,25 +121,52 @@ namespace _2GETHER
                 loadedData.Hp, loadedData.MaxHp, loadedData.Mp, loadedData.MaxMp, loadedData.Gold, loadedData.Exp,
                 loadedData.MaxExp, job, loadedData.Potions, loadedData.MonsterKills);
 
-            //var butItems = currentItemManager.items.Where
-                //(item => loadedData.SoldItems.Contains(item.eItem.ToString())).ToList();
-            
-            /*foreach (var item in currentItemManager.items)
+
+            currentPlayer.equipmentInventory.Clear();
+            currentPlayer.consumableInventory.Clear();
+
+
+            foreach (var loadItemName in loadedData.EquipmentInventory.Keys)
             {
-                if (loadedData.SoldItems.Contains (item.eItem.ToString()))
+                var item = currentItemManager.equipmentItemList.Find(x => x.eItem.ToString() == loadItemName);
+                currentPlayer.equipmentInventory.Add(item);
+
+                for (int i = 0; i < loadedData.EquipmentInventory[loadItemName]; i++)
                 {
-                    item.isPlayerBuy = true;
+                    item.AddCount();
                 }
-            }*/
+            }
+
+            var equipitems = currentPlayer.equipmentInventory.Where(x => x.eItem.ToString() == loadedData.WeaponEquipment).ToList();
+            foreach (var equipItem in equipitems)
+            {
+                equipItem.IsPlayerEquip = true;
+            }
+
+            foreach (var loadItemName in loadedData.ConsumableInventory.Keys)
+            {
+                var item = currentItemManager.consumableItemList.Find(x => x.eItem.ToString() == loadItemName);
+                currentPlayer.consumableInventory.Add(item);
+
+                for (int i = 0; i < loadedData.ConsumableInventory[loadItemName]; i++)
+                {
+                    item.AddCount();
+                }
+            }
+
+            foreach (Item item in currentPlayer.equipmentInventory)
+            {
+                //item.ItemCount = loadedData.EquipmentInventory[item.eItem.ToString()];
+            }
 
 
 
-            //currentItemManager.items
+            ioManager.PrintDebugMessage("불러오기 완료");
         }
 
         public void LoadingData()
         {
-            int number = 0;
+            /*int number = 0;
             int fileSelect = -1;
 
             for (number = 0; number < FileMaxCount; number++)
@@ -160,22 +184,20 @@ namespace _2GETHER
                 }
             }
 
-            fileSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(FileLoadingMessage.ToArray(), true);
+            fileSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(FileLoadingMessage.ToArray(), true);*/
 
-            /*if (fileSelect == 0)
-            {
-                return;
-            }*/
             /*if (!File.Exists(saveFileName))
             {
                 ioManager.PrintDebugMessage("저장된 게임 데이터가 없습니다.");
                 return;
             }*/
+
+
         }
 
         public void SaveOrLoad()
         {
-            LoadingData();
+            //LoadingData();
 
             int select = -1;
             while (true)
@@ -206,11 +228,11 @@ namespace _2GETHER
         }
     }
 
-    
+
 
     struct Data
     {
-        public string DataSaveTime {  get; set; }
+        public string DataSaveTime { get; set; }
 
         public string Name { get; set; }
         public int Level { get; set; }
@@ -231,21 +253,8 @@ namespace _2GETHER
         public string WeaponEquipment { get; set; }
         public string ArmorEquipment { get; set; }
 
-        public List<string> InventoryItems { get; set; }
-
-        public List<string> SoldItems { get; set; }
-        /*public List<string> inventoryItems = new List<string>();
-        public List<string> InventoryItems
-        {
-            get
-            {
-                return inventoryItems;
-            }
-            set
-            {
-                inventoryItems = value;
-            }
-        }*/
+        public Dictionary<string, int> EquipmentInventory { get; set; }
+        public Dictionary<string, int> ConsumableInventory { get; set; }
 
     }
 }
