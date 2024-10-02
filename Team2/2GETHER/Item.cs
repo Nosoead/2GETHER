@@ -61,6 +61,10 @@ namespace _2GETHER
         public int ItemCount { get; protected set; }
         protected string? ItemDescription;
 
+        public void SetCount(int count)
+        {
+            ItemCount = count;
+        }
         public void AddCount()
         {
             ItemCount++;
