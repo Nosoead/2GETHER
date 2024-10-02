@@ -4,8 +4,8 @@
     {
         public void GetStatusInfo(Player player, IOManager ioManager, Inventory inventory)
         {
-            EquipmentItem equippedWeapon = player.WeaponEquipment[0] as EquipmentItem;
-            EquipmentItem equippedArmor = player.ArmorEquipment[0] as EquipmentItem;
+            EquipmentItem equippedWeapon = player.weaponEquipment[0] as EquipmentItem;
+            EquipmentItem equippedArmor = player.armorEquipment[0] as EquipmentItem;
 
             int weaponDamage = equippedWeapon != null ? equippedWeapon.ItemATK : 0;
             int armorDefense = equippedArmor != null ? equippedArmor.ItemDEF : 0;

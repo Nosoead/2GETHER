@@ -30,8 +30,8 @@
             string[] jobInfo = new string[]
             {
                 "전사",
-                "마법사",
                 "궁수",
+                "마법사",
             };
 
             StartPotion(player, itemManager);
