@@ -402,16 +402,6 @@
             MonsterKills++;
         }
 
-        public void AddMp()
-        {
-            Mp += 10;
-
-            if (Mp > MaxMp)
-            {
-                Mp = MaxMp;
-            }
-        }
-
         public void SetPlayerData(string name, int level, double attack, double defense, double hp, double maxHp, double mp, double maxMp, int gold, int exp, int maxExp, EJob job, int potions, int monsterKills)
         {
             Name = name;
