@@ -7,7 +7,7 @@
         public double Hp { get; private set; }
         public double Attack { get; private set; }
 
-        public List<Monster> monsters = new List<Monster>();
+        public List<Monster> Monsters = new List<Monster>();
 
         public Monster()
         {
@@ -24,28 +24,31 @@
             Hp = hp;
             Attack = attack;
         }
-        
-        public void MonsterDamageTaken(double baseDamage)
+
+        public double MonsterDamageTaken(double baseDamage)
         {
-            double errorDamage = Math.Ceiling(baseDamage * 0.1);
-
+            double errorDamage = baseDamage * 0.1;
             Random random = new Random();
-            double finalDamage = baseDamage + random.Next(-(int)errorDamage, (int)errorDamage + 1);
-
+            double randomNumber = (random.NextDouble() * 2) - 1;
+            double finalDamage = baseDamage + (errorDamage * randomNumber);
+            finalDamage = Math.Ceiling(finalDamage);
             Hp -= finalDamage;
 
             if (Hp < 0) Hp = 0;
+
+            return finalDamage;
         }
 
         public void CreateMonster()
         {
-            monsters.Clear();
+            Monsters.Clear();
             Random random = new Random();
             int monsterCount = random.Next(1, 5);
+
             for (int i = 0; i < monsterCount; i++)
             {
                 Monster addMonster = RandomMonster(random.Next(1, 5));
-                monsters.Add(addMonster);
+                Monsters.Add(addMonster);
             }
         }
 
