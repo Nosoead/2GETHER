@@ -228,7 +228,7 @@ namespace _2GETHER
                 {
                     player.Buy(selectItem);
                     selectItem.AddCount();
-                    player.Get(selectItem);
+                    player.AddPotion(selectItem);
                     if (!player.consumableInventory.Contains(selectItem))
                     { player.consumableInventory.Add(selectItem); }
                 }
