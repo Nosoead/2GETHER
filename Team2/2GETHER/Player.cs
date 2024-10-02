@@ -92,6 +92,8 @@
         {
             damage = damage * (100 - Defense) / 100;
 
+            damage = Math.Round(damage);
+
             Hp -= damage;
 
             if (Hp < 0) Hp = 0;
@@ -292,38 +294,6 @@
         {
             Attack -= item.ItemATK;
             Defense -= item.ItemDEF;
-        }
-
-        public void EquipItem(int inputNum, Inventory inventory)
-        {
-            if (inputNum < 1 || inputNum > equipmentInventory.Count)
-            {
-                Console.WriteLine("유효하지 않은 아이템 번호입니다.");
-                return;
-            }
-
-            EquipmentItem equipmentItem = equipmentInventory[inputNum - 1];
-
-            if (equipmentItem.eItemType == EItemType.Armor)
-            {
-                if (armorEquipment[0] != null)
-                {
-                    UpdateStatsOnUnequip(armorEquipment[0]);
-                }
-
-                armorEquipment[0] = equipmentItem;
-                UpdateStatsOnEquip(equipmentItem);
-            }
-            else if (equipmentItem.eItemType == EItemType.Weapon)
-            {
-                if (weaponEquipment[0] != null)
-                {
-                    UpdateStatsOnUnequip(weaponEquipment[0]);
-                }
-
-                weaponEquipment[0] = equipmentItem;
-                UpdateStatsOnEquip(equipmentItem);
-            }
         }
 
         public int Buy(Item item)

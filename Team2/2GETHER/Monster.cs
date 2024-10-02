@@ -31,7 +31,7 @@
             Random random = new Random();
             double randomNumber = (random.NextDouble() * 2) - 1;
             double finalDamage = baseDamage + (errorDamage * randomNumber);
-            finalDamage = Math.Ceiling(finalDamage);
+            finalDamage = Math.Round(finalDamage);
             Hp -= finalDamage;
 
             if (Hp < 0) Hp = 0;
