@@ -99,6 +99,7 @@
                     }
                     else if (skillSelect == 2)
                     {
+                        
                         SkillTwo(player, monster, ioManager, skillSelect, true);
 
 
@@ -113,7 +114,6 @@
                     {
                         MonsterTurn(player, monster, i, ioManager);
 
-
                     }
                 }
             }
@@ -121,9 +121,33 @@
         }
         public void SkillOne(Player player, Monster monster, IOManager ioManager, int monSelect, int skillSelect, bool isSkillUsed = false)
         {
+            if (monster.Monsters[monSelect].Hp <= 0)
+            {
+                string[] againPlayerTurn =
+                {
+                    $"\n{monster.Monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
+                    "",
+                    "다른 몬스터를 선택하세요.",
+                    "",
+                    ">>"
+                };
+
+                string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
+
+                ioManager.PrintMessage(againPlayerTurn, false, false);
+
+                Console.ReadKey();
+
+                ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+                
+                
+            }
+
 
             if (player.Mp < 10) // 스킬 1 의 마나가 부족할때 턴 선택으로 돌아가기
             {
+                player.UseSkillOne(monster.Monsters[monSelect]);
+
                 Console.ReadKey();
 
                 ExcuteTurn(player, monster, ioManager);
@@ -172,6 +196,7 @@
 
             if (player.Mp < 15)
             {
+                player.UseSkillTwo(monster.Monsters);
                 Console.ReadKey();
                 ExcuteTurn(player, monster, ioManager);
                 Count--;
@@ -189,8 +214,6 @@
                         DeadMonsterCount++;
                         player.IncrementMonsterKills();
                     }
-
-
 
                     string status = (target.Hp == 0) ? "Dead" : target.Hp.ToString();
 
@@ -215,6 +238,26 @@
         }
         public void BasicAttack(Player player, Monster monster, IOManager ioManager, int monSelect, int skillSelect, bool isSkillUsed = false)
         {
+            if (monster.Monsters[monSelect].Hp <= 0)
+            {
+                string[] againPlayerTurn =
+                {
+                    $"\n{monster.Monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
+                    "",
+                    "다른 몬스터를 선택하세요.",
+                    "",
+                    ">>"
+                };
+
+                string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
+
+                ioManager.PrintMessage(againPlayerTurn, false, false);
+
+                Console.ReadKey();
+
+                ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+
+            }
             double previousHp = monster.Monsters[monSelect].Hp;
 
             double damage = player.PlayerAttack(monster.Monsters[monSelect]);
@@ -302,12 +345,22 @@
             {
                 int previousExp = player.Exp;
 
+                double previousHp = player.Hp;
+
+                double previousMp = player.Mp;
+
                 for (int i = 0; i < monster.Monsters.Count; i++)
                 {
                     player.LevelSystem(monster.Monsters[i]);
                 }
+                //player.AddMp();
 
                 int currentExp = player.Exp;
+
+                double currentHp = player.Hp;
+
+                double currentMp = player.Mp;
+
                 string[] winMessage =
                 {
                     "Battle!! - Result",
@@ -318,7 +371,8 @@
                     "",
                     "[캐릭터 정보]",
                     $"Lv.{player.Level} {player.Name}",
-                    $"HP {player.MaxHp} -> {player.Hp}",
+                    $"HP {previousHp} -> {currentHp}",
+                    $"Mp {previousMp} -> {currentMp}",
                     $"exp {previousExp} -> {currentExp}",
                     "",
                     "계속 하려면 아무키나 입력해주세요.",
