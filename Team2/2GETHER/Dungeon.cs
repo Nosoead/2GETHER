@@ -12,12 +12,12 @@
 
             monster.CreateMonster();
 
-            while (player.Hp > 0 && monster.monsters.Count > DeadMonsterCount)
+            while (player.Hp > 0 && monster.Monsters.Count > DeadMonsterCount)
             {
                 ExcuteTurn(player, monster, ioManager);
             }
 
-            if (monster.monsters.Count == DeadMonsterCount)
+            if (monster.Monsters.Count == DeadMonsterCount)
             {
                 BattleResult(1, player, monster, ioManager, quest); // 전투결과 승리로 이동
                 return;
@@ -29,6 +29,7 @@
             }
 
         }
+
 
         public void ExcuteTurn(Player player, Monster monster, IOManager ioManager) // 턴 실행 전 선택지 선택
         {
@@ -115,9 +116,9 @@
             
             else if (Count % 2 == 1) // 결과값이 1일때 몬스터의 턴을 실행
             {
-                for (int i = 0; i < monster.monsters.Count; i++)
+                for (int i = 0; i < monster.Monsters.Count; i++)
                 {
-                    if (monster.monsters[i].Hp > 0)
+                    if (monster.Monsters[i].Hp > 0)
                     {
                         ioManager.PrintMessage(MonsterTurn(player, monster, i, ioManager), true, false);
                         Console.ReadKey(true);
@@ -127,15 +128,16 @@
             Count++;
 
         }
+
         public string[] PlayerTurn(Player player, Monster monster, IOManager ioManager, int monSelect, int skillSelect, bool isSkillUsed = false) // 플레이어의 턴
         {
             string AreaAttackName = player.GetSkillNameTwo();
 
-            if (monster.monsters[monSelect].Hp <= 0)
+            if (monster.Monsters[monSelect].Hp <= 0)
             {
                 string[] againPlayerTurn =
                 {
-                    $"\n{monster.monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
+                    $"\n{monster.Monsters[monSelect].Name} 은(는) 이미 죽었습니다.",
                     "",
                     "다른 몬스터를 선택하세요.",
                     "",
@@ -153,19 +155,19 @@
 
             }
 
-            double previousHp = monster.monsters[monSelect].Hp;
+            double previousHp = monster.Monsters[monSelect].Hp;
 
             double damage = 0;
 
             if (isSkillUsed && skillSelect == 1)
             {
-                damage = player.UseSkillOne(monster.monsters[monSelect]); // 스킬 1 사용
+                damage = player.UseSkillOne(monster.Monsters[monSelect]); // 스킬 1 사용
             }
             else if (isSkillUsed && skillSelect == 2)
             {
                 double previousMp = player.Mp;          
 
-                damage = player.UseSkillTwo(monster.monsters); // 스킬 2 사용
+                damage = player.UseSkillTwo(monster.Monsters); // 스킬 2 사용
 
                 List<Monster> attackedMonster = player.GetAttackedMonster(); // 스킬 2 에 공격당한 몬스터의 리스트
 
@@ -212,10 +214,10 @@
             }
             else
             {
-                damage = player.PlayerAttack(monster.monsters[monSelect]); // 일반공격
+                damage = player.PlayerAttack(monster.Monsters[monSelect]); // 일반공격
             }
 
-            if (monster.monsters[monSelect].Hp <= 0)
+            if (monster.Monsters[monSelect].Hp <= 0)
             {
                 DeadMonsterCount++; // 몬스터 사망시 카운트 
                 player.IncrementMonsterKills(); // 퀘스트 몬스터 카운트
@@ -228,13 +230,13 @@
                 return new string[] { };
             }
 
-            string hpInfo = (monster.monsters[monSelect].Hp == 0) ? "Dead" : monster.monsters[monSelect].Hp.ToString();
+            string hpInfo = (monster.Monsters[monSelect].Hp == 0) ? "Dead" : monster.Monsters[monSelect].Hp.ToString();
 
             string criticalHitMessage = (damage == player.Attack * 1.6) ? "치명타 공격!!" : "";
 
             string attackMessage = (damage == 0)
-             ? $"{monster.monsters[monSelect].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
-             : $"{monster.monsters[monSelect].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
+             ? $"{monster.Monsters[monSelect].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
+             : $"{monster.Monsters[monSelect].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
 
             string[] playerTurn = new string[]
             {
@@ -243,7 +245,7 @@
                 $"Lv.{player.Level} {player.Name} 의 공격!",
                 attackMessage,
                 "",
-                $"Lv.{monster.monsters[monSelect].Level} {monster.monsters[monSelect].Name}",
+                $"Lv.{monster.Monsters[monSelect].Level} {monster.Monsters[monSelect].Name}",
                 $"HP {previousHp} -> {hpInfo}",
                 "",
                 "계속 하려면 아무키나 입력해주세요.",
@@ -253,9 +255,10 @@
 
             return playerTurn;
         }
+
         public string[] MonsterTurn(Player player, Monster monster, int i, IOManager ioManager) // 몬스터의 턴
         {
-            double damage = monster.monsters[i].Attack;
+            double damage = monster.Monsters[i].Attack;
 
             double previousHp = player.Hp;
 
@@ -267,7 +270,7 @@
             {
                 "Battle!!",
                 "",
-                $"Lv.{monster.monsters[i].Level} {monster.monsters[i].Name} 의 공격!",
+                $"Lv.{monster.Monsters[i].Level} {monster.Monsters[i].Name} 의 공격!",
                 "",
                 $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {damage} ]",
                 $"HP {previousHp} ->{currentHp}",
@@ -281,26 +284,27 @@
         }
         public string[] GetRandomMonstersInfo(Monster monster, IOManager ioManager) // 랜덤한 몬스터의 정보를 불러옴
         {
-            string[] randomMonstersInfo = new string[monster.monsters.Count];
+            string[] randomMonstersInfo = new string[monster.Monsters.Count];
 
-            for (int i = 0; i < monster.monsters.Count; i++)
+            for (int i = 0; i < monster.Monsters.Count; i++)
             {
 
-                string monsterHpDisplay = (monster.monsters[i].Hp == 0) ? "Dead" : $"HP {monster.monsters[i].Hp.ToString()}";
-                randomMonstersInfo[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} {monsterHpDisplay}";
+                string monsterHpDisplay = (monster.Monsters[i].Hp == 0) ? "Dead" : $"HP {monster.Monsters[i].Hp.ToString()}";
+                randomMonstersInfo[i] = $"Lv. {monster.Monsters[i].Level} {monster.Monsters[i].Name} {monsterHpDisplay}";
 
             }
             return randomMonstersInfo;
         }
+
         public void BattleResult(int result, Player player, Monster monster, IOManager ioManager, Quest quest) // 전투결과
         {
             if (result == 1) // 승리
             {
                 int previousExp = player.Exp;
 
-                for (int i = 0; i < monster.monsters.Count; i++)
+                for (int i = 0; i < monster.Monsters.Count; i++)
                 {
-                    player.LevelSystem(monster.monsters[i]);
+                    player.LevelSystem(monster.Monsters[i]);
                 }
 
                 int currentExp = player.Exp;
