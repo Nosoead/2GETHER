@@ -90,6 +90,8 @@
 
         public void PlayerDamageTaken(double damage)
         {
+            damage = damage * (100 - Defense) / 100;
+
             Hp -= damage;
 
             if (Hp < 0) Hp = 0;
