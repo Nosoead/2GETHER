@@ -3,11 +3,15 @@
     class Dungeon
     {
         int Count;
+
         int DeadMonsterCount;
 
         public void StartBattle(Player player, Monster monster, IOManager ioManager, Quest quest) // 던전 전투 시작
         {
+            double previousHp = player.Hp;
+
             DeadMonsterCount = 0;
+
             Count = 0;
 
             monster.CreateMonster();
@@ -19,27 +23,26 @@
 
             if (monster.Monsters.Count == DeadMonsterCount)
             {
-                BattleResult(1, player, monster, ioManager, quest); // 전투결과 승리로 이동
+                BattleResult(1, player, monster, ioManager, quest, previousHp); // 전투결과 승리로 이동
                 return;
             }
             else if (player.Hp == 0)
             {
-                BattleResult(2, player, monster, ioManager, quest); // 전투결과 패배로 이동
+                BattleResult(2, player, monster, ioManager, quest, previousHp); // 전투결과 패배로 이동
                 return;
             }
-
         }
         public void ExcuteTurn(Player player, Monster monster, IOManager ioManager) // 턴 실행 전 선택지 선택
         {
             int monSelect;
-            int atkSelect;
-            int skillSelect = 0;
 
+            int atkSelect;
+
+            int skillSelect = 0;
 
             if (Count % 2 == 0) // 결과값이 0일때 플레이어의 턴을 실행
             {
                 string[] atkChoice = { "공격", "스킬" };
-
 
                 string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
 
@@ -56,11 +59,9 @@
 
                 atkSelect = ioManager.PrintMessageWithNumberForSelect(atkChoice, false, false);
 
-
                 if (atkSelect == 1)
                 {
                     monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true, true);
-
 
                     if (monSelect == 0)
                     {
@@ -69,12 +70,10 @@
                     else
                     {
                         BasicAttack(player, monster, ioManager, monSelect - 1, skillSelect, false);
-
                     }
                 }
                 else if (atkSelect == 2)
                 {
-
 
                     string[] playerSkills = { player.GetSkillNameOne(), player.GetSkillNameTwo() };
 
@@ -92,17 +91,14 @@
                     {
                         monSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, battleInfo, true, true);
 
-                        SkillOne(player, monster, ioManager, monSelect - 1, skillSelect, true);
+                        SkillOne(player, monster, ioManager, monSelect - 1);
 
 
 
                     }
                     else if (skillSelect == 2)
                     {
-                        
-                        SkillTwo(player, monster, ioManager, skillSelect, true);
-
-
+                        SkillTwo(player, monster, ioManager);
                     }
                 }
             }
@@ -119,7 +115,7 @@
             }
             Count++;
         }
-        public void SkillOne(Player player, Monster monster, IOManager ioManager, int monSelect, int skillSelect, bool isSkillUsed = false)
+        public void SkillOne(Player player, Monster monster, IOManager ioManager, int monSelect)
         {
             if (monster.Monsters[monSelect].Hp <= 0)
             {
@@ -136,12 +132,11 @@
 
                 Console.ReadKey();
 
-                //ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+                // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
                 Count--;
-                return;
-                
-            }
 
+                return;
+            }
 
             if (player.Mp < 10) // 스킬 1 의 마나가 부족할때 턴 선택으로 돌아가기
             {
@@ -149,9 +144,8 @@
 
                 Console.ReadKey();
 
-                //ExcuteTurn(player, monster, ioManager);
-
                 Count--;
+
                 return;
             }
             else
@@ -176,6 +170,7 @@
                     "",
                     ">>"
                 };
+
                 ioManager.PrintMessage(useSkillOneInfo, true, false);
 
                 Console.ReadKey(true);
@@ -186,9 +181,9 @@
                 DeadMonsterCount++; // 몬스터 사망시 카운트 
                 player.IncrementMonsterKills(); // 퀘스트 몬스터 카운트
             }
-
         }
-        public void SkillTwo(Player player, Monster monster, IOManager ioManager, int skillSelect, bool isSkillUsed = false)
+
+        public void SkillTwo(Player player, Monster monster, IOManager ioManager)
         {
             List<Monster> attackedMonster = player.GetAttackedMonster();
 
@@ -200,9 +195,8 @@
 
                 Console.ReadKey();
 
-                //ExcuteTurn(player, monster, ioManager);
-
                 Count--;
+
                 return;
             }
             else
@@ -221,8 +215,7 @@
 
                     string status = (target.Hp == 0) ? "Dead" : target.Hp.ToString();
 
-                    areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + (int)damage} -> {status}[ 데미지 : {(int)damage}]\n";
-
+                    areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + (int)damage} -> {status} [ 데미지 : {(int)damage} ]\n";
                 }
 
                 attackedMonster.Clear();
@@ -258,9 +251,9 @@
                 ioManager.PrintMessage(againPlayerTurn, false, false);
 
                 Console.ReadKey();
-
-                //ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+                // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
                 Count--;
+
                 return;
             }
             double previousHp = monster.Monsters[monSelect].Hp;
@@ -289,6 +282,7 @@
                 "",
                 ">>",
             };
+
             ioManager.PrintMessage(basicAttackInfo, true, false);
 
             Console.ReadKey(true);
@@ -296,6 +290,7 @@
             if (monster.Monsters[monSelect].Hp <= 0)
             {
                 DeadMonsterCount++;
+
                 player.IncrementMonsterKills();
             }
         }
@@ -317,7 +312,7 @@
                 "",
                 $"Lv.{monster.Monsters[i].Level} {monster.Monsters[i].Name} 의 공격!",
                 "",
-                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {previousHp - currentHp}]",
+                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [ 데미지 : {previousHp - currentHp} ]",
                 $"HP {previousHp} ->{currentHp}",
                 "",
                 "계속 하려면 아무키나 입력해주세요.",
@@ -335,22 +330,20 @@
 
             for (int i = 0; i < monster.Monsters.Count; i++)
             {
-
                 string monsterHpDisplay = (monster.Monsters[i].Hp == 0) ? "Dead" : $"HP {monster.Monsters[i].Hp.ToString()}";
 
                 randomMonstersInfo[i] = $"Lv. {monster.Monsters[i].Level} {monster.Monsters[i].Name} {monsterHpDisplay}";
-
             }
             return randomMonstersInfo;
         }
 
-        public void BattleResult(int result, Player player, Monster monster, IOManager ioManager, Quest quest) // 전투결과
+        public void BattleResult(int result, Player player, Monster monster, IOManager ioManager, Quest quest, double playerBeforeHp) // 전투결과
         {
+            double previousHp = playerBeforeHp;
+
             if (result == 1) // 승리
             {
                 int previousExp = player.Exp;
-
-                double previousHp = player.Hp;
 
                 double previousMp = player.Mp;
 
@@ -393,7 +386,7 @@
             }
 
             else if (result == 2) // 패배
-            {
+            {   
                 string[] loseMessage =
                 {
                     "Battle!! - Result",
@@ -401,12 +394,13 @@
                     "You Lose",
                     "",
                     $"Lv.{player.Level} {player.Name}",
-                    $"HP {player.MaxHp} -> {player.Hp}",
+                    $"HP {previousHp} -> {player.Hp}",
                     "",
                     "계속 하려면 아무키나 입력해주세요.",
                     "",
                     ">>"
                 };
+
                 ioManager.PrintMessage(loseMessage, true, false);
 
                 Console.ReadKey(true);
@@ -417,14 +411,13 @@
         {
             // 랜덤 아이템 드랍
             EquipmentItem randomItem = quest.RandomItemDrop(); // Quest 클래스의 RandomItemDrop 사용
-            
-            player.equipmentInventory.Add(randomItem);
+
+            EquipmentItem foundItem = player.equipmentInventory.Find(item => Object.ReferenceEquals(item, randomItem));
             randomItem.AddCount();
-            if (!player.equipmentInventory.Contains(randomItem))
-            { player.equipmentInventory.Add(randomItem); }
 
             // 랜덤 골드 드랍 (1000 ~ 5000 골드 사이)
             int randomGold = quest.RandomGoldDrop(1000, 5000); // Quest 클래스의 RandomGoldDrop 사용
+
             player.AddGold(randomGold);
 
             // 보상 출력
@@ -441,6 +434,7 @@
             };
 
             ioManager.PrintMessage(rewardMessage, true, false);
+
             Console.ReadKey(true);
         }
 
