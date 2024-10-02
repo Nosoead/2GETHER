@@ -101,7 +101,6 @@ namespace _2GETHER
                 loadedData.Hp, loadedData.MaxHp, loadedData.Mp, loadedData.MaxMp, loadedData.Gold, loadedData.Exp,
                 loadedData.MaxExp, job, loadedData.Potions, loadedData.MonsterKills);
 
-
             currentPlayer.equipmentInventory.Clear();
             currentPlayer.consumableInventory.Clear();
 
@@ -119,10 +118,30 @@ namespace _2GETHER
                 }
             }
 
-            var equipitems = currentPlayer.equipmentInventory.Where(x => x.eItem.ToString() == loadedData.WeaponEquipment).ToList();
-            foreach (var equipItem in equipitems)
+            bool isWeaponSet = false;
+            bool isArmorSet = false;
+
+            var armorItems = currentPlayer.equipmentInventory.Where(x => x.eItem.ToString() == loadedData.ArmorEquipment).ToList();
+            var weaponItems = currentPlayer.equipmentInventory.Where(x => x.eItem.ToString() == loadedData.WeaponEquipment).ToList();
+
+            foreach (var equipItem in weaponItems)
             {
                 equipItem.IsPlayerEquip = true;
+                if (!isWeaponSet && equipItem.eItemType == EItemType.Weapon)
+                {
+                    currentPlayer.weaponEquipment[0] = equipItem;
+                    isWeaponSet = true;
+                }
+            }
+
+            foreach (var equipItem in armorItems)
+            {
+                equipItem.IsPlayerEquip = true;
+                if (!isArmorSet && equipItem.eItemType == EItemType.Armor)
+                {
+                    currentPlayer.armorEquipment[0] = equipItem;
+                    isArmorSet = true;
+                }
             }
 
             foreach (var loadItemName in loadedData.ConsumableInventory.Keys)
