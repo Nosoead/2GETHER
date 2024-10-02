@@ -62,9 +62,6 @@ namespace _2GETHER
                 saveData.EquipmentInventory.Add(item.eItem.ToString(), item.ItemCount);
             }
 
-            /*Console.WriteLine(saveData.EquipmentInventory.Count);
-            Console.ReadKey(true);*/
-
             foreach (var item in currentPlayer.consumableInventory)
             {
                 saveData.ConsumableInventory.Add(item.eItem.ToString(), item.ItemCount);
@@ -153,13 +150,6 @@ namespace _2GETHER
                     item.AddCount();
                 }
             }
-
-            foreach (Item item in currentPlayer.equipmentInventory)
-            {
-                //item.ItemCount = loadedData.EquipmentInventory[item.eItem.ToString()];
-            }
-
-
 
             ioManager.PrintDebugMessage("불러오기 완료");
         }
