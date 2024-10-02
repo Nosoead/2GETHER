@@ -397,6 +397,16 @@
             }
         }
 
+        public void AddMp()
+        {
+            Mp += 10;
+
+            if (Mp > MaxMp)
+            {
+                Mp = MaxMp;
+            }
+        }
+
         public void IncrementMonsterKills()
         {
             MonsterKills++;
