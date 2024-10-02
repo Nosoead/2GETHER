@@ -136,8 +136,9 @@
 
                 Console.ReadKey();
 
-                ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
-                
+                //ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+                Count--;
+                return;
                 
             }
 
@@ -148,9 +149,10 @@
 
                 Console.ReadKey();
 
-                ExcuteTurn(player, monster, ioManager);
+                //ExcuteTurn(player, monster, ioManager);
 
                 Count--;
+                return;
             }
             else
             {
@@ -198,9 +200,10 @@
 
                 Console.ReadKey();
 
-                ExcuteTurn(player, monster, ioManager);
+                //ExcuteTurn(player, monster, ioManager);
 
                 Count--;
+                return;
             }
             else
             {
@@ -221,6 +224,7 @@
                     areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + (int)damage} -> {status}[ 데미지 : {(int)damage}]\n";
 
                 }
+
                 attackedMonster.Clear();
 
                 string[] useSkillTwoInfo =
@@ -255,8 +259,9 @@
 
                 Console.ReadKey();
 
-                ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
-
+                //ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+                Count--;
+                return;
             }
             double previousHp = monster.Monsters[monSelect].Hp;
 
@@ -312,7 +317,7 @@
                 "",
                 $"Lv.{monster.Monsters[i].Level} {monster.Monsters[i].Name} 의 공격!",
                 "",
-                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {currentHp} -> {previousHp} ]",
+                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {previousHp - currentHp}]",
                 $"HP {previousHp} ->{currentHp}",
                 "",
                 "계속 하려면 아무키나 입력해주세요.",
@@ -412,11 +417,11 @@
         {
             // 랜덤 아이템 드랍
             EquipmentItem randomItem = quest.RandomItemDrop(); // Quest 클래스의 RandomItemDrop 사용
-            EquipmentItem selectItem = randomItem;
+            
             player.equipmentInventory.Add(randomItem);
-            selectItem.AddCount();
-            if (!player.equipmentInventory.Contains(selectItem))
-            { player.equipmentInventory.Add(selectItem); }
+            randomItem.AddCount();
+            if (!player.equipmentInventory.Contains(randomItem))
+            { player.equipmentInventory.Add(randomItem); }
 
             // 랜덤 골드 드랍 (1000 ~ 5000 골드 사이)
             int randomGold = quest.RandomGoldDrop(1000, 5000); // Quest 클래스의 RandomGoldDrop 사용
