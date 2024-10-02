@@ -9,16 +9,8 @@
         {
             DeadMonsterCount = 0;
             Count = 0;
+
             monster.CreateMonster();
-
-
-            //string[] battleInfo =
-            //{
-            //    "\n[내정보]\n",
-            //    $"Lv.{player.Level}  {player.Name}  ({player.Job})",
-            //    $"HP {player.Hp}/{player.MaxHp}",
-            //    $"MP {player.Mp}/{player.MaxMp}\n"
-            //};
 
             while (player.Hp > 0 && monster.monsters.Count > DeadMonsterCount)
             {
@@ -38,17 +30,21 @@
 
         }
 
-        public void ExcuteTurn(Player player, Monster monster, IOManager ioManager) // 턴을 실행합니다.
+        public void ExcuteTurn(Player player, Monster monster, IOManager ioManager) // 턴 실행 전 선택지 선택
         {
             int monSelect;
             int atkSelect;
             int skillSelect = 0;
+            
 
-            if (Count % 2 == 0) // 결과값이 0일때 플레이어턴을 실행합니다,
+            if (Count % 2 == 0) // 결과값이 0일때 플레이어의 턴을 실행
             {
                 string[] atkChoice = { "공격", "스킬" };
 
-                GetRandomMonsterInfo(monster, ioManager);
+
+                string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
+
+                ioManager.PrintMessage(randomMonstersInfo, true, true);
 
                 string[] battleInfo =
                 {
@@ -61,7 +57,7 @@
 
                 atkSelect = ioManager.PrintMessageWithNumberForSelect(atkChoice, false, false);
 
-                string[] randomMonstersInfo = GetRandomMonsterInfo(monster, ioManager);
+
 
                 if (atkSelect == 1)
                 {
@@ -81,7 +77,10 @@
                 {
                     string[] playerSkills = { player.GetSkillNameOne(), player.GetSkillNameTwo() };
 
+                    ioManager.PrintMessage(randomMonstersInfo, true, true);
+
                     ioManager.PrintMessage(battleInfo, false);
+
                     skillSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(playerSkills, false, false);
 
                     if (skillSelect == 0)
@@ -105,13 +104,16 @@
                     else if (skillSelect == 2)
                     {
                         ioManager.PrintMessage(randomMonstersInfo, true, true);
+
                         ioManager.PrintMessage(battleInfo, false, false);
+
                         ioManager.PrintMessage(PlayerTurn(player, monster, ioManager, 0, skillSelect, true), true, false);
                         Console.ReadKey(true);
                     }
                 }
             }
-            else if (Count % 2 == 1) // 결과값이 1일때 몬스터의턴을 실행합니다.
+            
+            else if (Count % 2 == 1) // 결과값이 1일때 몬스터의 턴을 실행
             {
                 for (int i = 0; i < monster.monsters.Count; i++)
                 {
@@ -122,8 +124,8 @@
                     }
                 }
             }
-
             Count++;
+
         }
         public string[] PlayerTurn(Player player, Monster monster, IOManager ioManager, int monSelect, int skillSelect, bool isSkillUsed = false) // 플레이어의 턴
         {
@@ -140,13 +142,14 @@
                     ">>"
                 };
 
-                string[] randomMonstersInfo = GetRandomMonsterInfo(monster, ioManager);
+                string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
+
                 ioManager.PrintMessage(againPlayerTurn, false, false);
+
                 Console.ReadKey();
-                int newMonSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(randomMonstersInfo, true, true);
-                return PlayerTurn(player, monster, ioManager, newMonSelect - 1, skillSelect, isSkillUsed);
 
-
+                ExcuteTurn(player, monster, ioManager); // 죽은 몬스터 공격 시 턴 선택으로 돌아가기
+                return new string[] { };
 
             }
 
@@ -156,22 +159,24 @@
 
             if (isSkillUsed && skillSelect == 1)
             {
-                damage = player.UseSkillOne(monster.monsters[monSelect]);
+                damage = player.UseSkillOne(monster.monsters[monSelect]); // 스킬 1 사용
             }
             else if (isSkillUsed && skillSelect == 2)
             {
+                double previousMp = player.Mp;          
 
-                damage = player.UseSkillTwo(monster.monsters);
+                damage = player.UseSkillTwo(monster.monsters); // 스킬 2 사용
 
-                List<Monster> attackedMonster = player.GetAttackedMonster(); // 랜덤한 2마리의 몬스터의 정보를 받아와서 리스트에 추가합니다.
+                List<Monster> attackedMonster = player.GetAttackedMonster(); // 스킬 2 에 공격당한 몬스터의 리스트
 
                 string areaAttackMsg = $"Lv.{player.Level} {player.Name} 의 {AreaAttackName}\n";
 
-
-                if (player.Mp < 9)
+                if (damage == 0 && isSkillUsed == true ) // 스킬 2 의 마나가 부족할때 턴 선택으로 돌아가기
                 {
-                    areaAttackMsg += "마나가 부족하여 스킬을 사용할 수 없습니다.\n";
+                    Console.ReadKey();
+                    ExcuteTurn(player, monster, ioManager);
                 }
+
                 else
                 {
 
@@ -189,14 +194,12 @@
                         areaAttackMsg += $"Lv.{target.Level} {target.Name} {target.Hp + damage} -> {status}[ 데미지 : {damage}]\n";
 
                     }
+                    attackedMonster.Clear();
                 }
-                attackedMonster.Clear();
-
 
 
                 return new string[]
                 {
-
                     "Battle!!",
                     "",
                     $"{areaAttackMsg}",
@@ -205,25 +208,32 @@
                     "",
                     ">>"
                 };
+
             }
             else
             {
-                damage = player.PlayerAttack(monster.monsters[monSelect]);
+                damage = player.PlayerAttack(monster.monsters[monSelect]); // 일반공격
             }
 
             if (monster.monsters[monSelect].Hp <= 0)
             {
-                DeadMonsterCount++;// 몬스터 사망시 카운트 
-                player.IncrementMonsterKills();// 퀘스트 몬스터 카운트
+                DeadMonsterCount++; // 몬스터 사망시 카운트 
+                player.IncrementMonsterKills(); // 퀘스트 몬스터 카운트
+            }
+
+            if (damage == 0 && isSkillUsed == true) // 스킬 1 의 마나가 부족할때 턴 선택으로 돌아가기
+            {
+                Console.ReadKey();
+                ExcuteTurn(player, monster, ioManager);
+                return new string[] { };
             }
 
             string hpInfo = (monster.monsters[monSelect].Hp == 0) ? "Dead" : monster.monsters[monSelect].Hp.ToString();
 
             string criticalHitMessage = (damage == player.Attack * 1.6) ? "치명타 공격!!" : "";
 
-            string attackMessage = (damage == 0 && player.Mp > 9)
+            string attackMessage = (damage == 0)
              ? $"{monster.monsters[monSelect].Name} 을(를) 공격했지만 아무일도 일어나지 않았습니다."
-             : (damage == 0 && player.Mp < 9) ? $"마나가 부족하여 스킬을 사용할 수 없습니다."
              : $"{monster.monsters[monSelect].Name} 을(를) 맞췄습니다. [ 데미지 : {damage} ] " + criticalHitMessage;
 
             string[] playerTurn = new string[]
@@ -269,7 +279,7 @@
 
             return monsterTurn;
         }
-        public string[] GetRandomMonsterInfo(Monster monster, IOManager ioManager) // 랜덤한 몬스터의 정보를 불러옵니다.
+        public string[] GetRandomMonstersInfo(Monster monster, IOManager ioManager) // 랜덤한 몬스터의 정보를 불러옴
         {
             string[] randomMonstersInfo = new string[monster.monsters.Count];
 
@@ -279,24 +289,7 @@
                 string monsterHpDisplay = (monster.monsters[i].Hp == 0) ? "Dead" : $"HP {monster.monsters[i].Hp.ToString()}";
                 randomMonstersInfo[i] = $"Lv. {monster.monsters[i].Level} {monster.monsters[i].Name} {monsterHpDisplay}";
 
-                //if (monster.monsters[i].Hp <= 0)
-                //{
-                //    Console.ForegroundColor = ConsoleColor.DarkGray;
-                //}
-                //else
-                //{
-                //    Console.ForegroundColor = ConsoleColor.White; 
-                //}
-
-                //ioManager.PrintMessage(new string[] { randomMonstersInfo[i] }, true);
-
-
-                //Console.ResetColor();
-
-
             }
-
-            ioManager.PrintMessage(randomMonstersInfo, true, true);
             return randomMonstersInfo;
         }
         public void BattleResult(int result, Player player, Monster monster, IOManager ioManager, Quest quest) // 전투결과
@@ -336,7 +329,7 @@
                 GiveDungeonReward(player, quest, ioManager);
             }
 
-            else if (result == 2)// 패배
+            else if (result == 2) // 패배
             {
                 string[] loseMessage =
                 {
