@@ -247,13 +247,8 @@
             acceptedQuests.Remove(quest);
 
             EquipmentItem selectItem = quest.ItemReward;
-
-            player.equipmentInventory.Add(quest.ItemReward);
+            EquipmentItem foundItem = player.equipmentInventory.Find(item => Object.ReferenceEquals(item, selectItem));
             selectItem.AddCount();
-            if (!player.equipmentInventory.Contains(selectItem))
-            {
-                player.equipmentInventory.Add(selectItem);
-            }
             player.AddGold(quest.GoldReward);
 
             string[] questCompletionInfo = new string[]
