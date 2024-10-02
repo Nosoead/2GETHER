@@ -236,7 +236,7 @@
             int conditionValue = quest.QuestCondition.Invoke();
             int goalValue = GetQuestGoal(quest);
 
-            if (conditionValue != goalValue)
+            if (conditionValue < goalValue)
             {
                 ioManager.PrintMessage(new string[] { $"퀘스트 완료 조건이 충족되지 않았습니다.\n아무키나 눌러주시면 메인화면으로 이동하겠습니다." }, true);
                 Console.ReadKey(true);
