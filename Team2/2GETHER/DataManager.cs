@@ -92,24 +92,7 @@ namespace _2GETHER
             }
 
             string jsonData = File.ReadAllText(saveFileName);
-
             Data loadedData = JsonSerializer.Deserialize<Data>(jsonData);
-
-            /*// 플레이어의 데이터를 불러와 게임에 반영
-            currentPlayer.Name = loadedData.Name;
-            currentPlayer.Level = loadedData.Level;
-            currentPlayer.Attack = loadedData.Attack;
-            currentPlayer.Defense = loadedData.Defense;
-            currentPlayer.Hp = loadedData.Hp;
-            currentPlayer.MaxHp = loadedData.MaxHp;
-            currentPlayer.Mp = loadedData.Mp;
-            currentPlayer.MaxMp = loadedData.MaxMp;
-            currentPlayer.Gold = loadedData.Gold;
-            currentPlayer.Exp = loadedData.Exp;
-            currentPlayer.MaxExp = loadedData.MaxExp;
-            currentPlayer.Job = Enum.Parse<EJob>(loadedData.Job); // 직업을 다시 enum 타입으로 변환
-            currentPlayer.Potions = loadedData.Potions;
-            currentPlayer.MonsterKills = loadedData.MonsterKills;*/
 
             EJob job = new EJob();
             job = Enum.Parse<EJob>(loadedData.Job);
@@ -122,15 +105,17 @@ namespace _2GETHER
             currentPlayer.equipmentInventory.Clear();
             currentPlayer.consumableInventory.Clear();
 
-
             foreach (var loadItemName in loadedData.EquipmentInventory.Keys)
             {
-                var item = currentItemManager.equipmentItemList.Find(x => x.eItem.ToString() == loadItemName);
-                currentPlayer.equipmentInventory.Add(item);
+                var existingItem = currentPlayer.equipmentInventory
+                    .FirstOrDefault(x => x.eItem.ToString() == loadItemName);
 
-                for (int i = 0; i < loadedData.EquipmentInventory[loadItemName]; i++)
+                if (existingItem == null)
                 {
-                    item.AddCount();
+                    var item = currentItemManager.equipmentItemList.Find(x => x.eItem.ToString() == loadItemName);
+                    currentPlayer.equipmentInventory.Add(item);
+
+                    item.SetCount(loadedData.EquipmentInventory[loadItemName]);
                 }
             }
 
@@ -145,15 +130,13 @@ namespace _2GETHER
                 var item = currentItemManager.consumableItemList.Find(x => x.eItem.ToString() == loadItemName);
                 currentPlayer.consumableInventory.Add(item);
 
-                for (int i = 0; i < loadedData.ConsumableInventory[loadItemName]; i++)
-                {
-                    item.AddCount();
-                }
+                item.SetCount(loadedData.ConsumableInventory[loadItemName]);
             }
 
             ioManager.PrintDebugMessage("불러오기 완료");
         }
 
+        //선택창 구현
         public void LoadingData()
         {
             /*int number = 0;

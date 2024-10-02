@@ -35,6 +35,7 @@ namespace _2GETHER
         {
             Console.WriteLine(message);
             Console.ReadKey();
+        
         }
 
         public void PlzInputAnyKey()
