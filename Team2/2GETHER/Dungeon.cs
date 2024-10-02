@@ -312,7 +312,7 @@
                 "",
                 $"Lv.{monster.Monsters[i].Level} {monster.Monsters[i].Name} 의 공격!",
                 "",
-                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {damage} ]",
+                $"Lv.{player.Level} {player.Name} 을(를) 맞췄습니다. [데미지 : {currentHp} -> {previousHp} ]",
                 $"HP {previousHp} ->{currentHp}",
                 "",
                 "계속 하려면 아무키나 입력해주세요.",
