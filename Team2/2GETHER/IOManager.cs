@@ -29,13 +29,22 @@ namespace _2GETHER
             MessageColor["상태 보기"] = ConsoleColor.DarkYellow;
             MessageColor["Battle"] = ConsoleColor.Red;
             MessageColor["Dead"] = ConsoleColor.DarkGray;
+            MessageColor["저장 완료"] = ConsoleColor.Green;
+            MessageColor["불러오기 완료"] = ConsoleColor.Cyan;
         }
 
-        public void PrintDebugMessage(string message = "디버그용 출력 메세지입니다.")
+        public void PrintDebugMessage(string message = "디버그용 출력 메세지입니다.", bool applyColor = false)
         {
-            Console.WriteLine(message);
+            if (applyColor)
+            {
+                PrintWithColor(message);
+            }
+            else
+            {
+                Console.WriteLine(message);
+            }
+
             Console.ReadKey();
-        
         }
 
         public void PlzInputAnyKey()

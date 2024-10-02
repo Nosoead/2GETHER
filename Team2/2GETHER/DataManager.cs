@@ -80,7 +80,7 @@ namespace _2GETHER
             string jsonData = JsonSerializer.Serialize(saveData, options);
             File.WriteAllText(saveFileName, jsonData);
 
-            ioManager.PrintDebugMessage("저장 완료");
+            ioManager.PrintDebugMessage("저장 완료", true);
         }
 
         public void LoadData()
@@ -152,7 +152,7 @@ namespace _2GETHER
                 item.SetCount(loadedData.ConsumableInventory[loadItemName]);
             }
 
-            ioManager.PrintDebugMessage("불러오기 완료");
+            ioManager.PrintDebugMessage("불러오기 완료", true);
         }
 
         //선택창 구현
