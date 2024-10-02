@@ -132,8 +132,6 @@
                     ">>"
                 };
 
-                string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
-
                 ioManager.PrintMessage(againPlayerTurn, false, false);
 
                 Console.ReadKey();
@@ -197,8 +195,11 @@
             if (player.Mp < 15)
             {
                 player.UseSkillTwo(monster.Monsters);
+
                 Console.ReadKey();
+
                 ExcuteTurn(player, monster, ioManager);
+
                 Count--;
             }
             else
@@ -233,6 +234,7 @@
                     ">>"
                 };
                 ioManager.PrintMessage(useSkillTwoInfo, true, false);
+
                 Console.ReadKey(true);
             }
         }
@@ -248,8 +250,6 @@
                     "",
                     ">>"
                 };
-
-                string[] randomMonstersInfo = GetRandomMonstersInfo(monster, ioManager);
 
                 ioManager.PrintMessage(againPlayerTurn, false, false);
 
