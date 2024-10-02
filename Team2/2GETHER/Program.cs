@@ -95,7 +95,7 @@
         public void Intro()
         {
             intro.SetPlayerName(player, ioManager);
-            intro.SetPlayerJob(player, ioManager);
+            intro.SetPlayerJob(player, ioManager, itemManager);
         }
 
         public void Status()
