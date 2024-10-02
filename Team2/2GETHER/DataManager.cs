@@ -51,8 +51,8 @@ namespace _2GETHER
             saveData.Job = currentPlayer.Job.ToString();
             saveData.Potions = currentPlayer.Potions;
             saveData.MonsterKills = currentPlayer.MonsterKills;
-            saveData.WeaponEquipment = currentPlayer.WeaponEquipment[0]?.eItem.ToString();
-            saveData.ArmorEquipment = currentPlayer.ArmorEquipment[0]?.eItem.ToString();
+            saveData.WeaponEquipment = currentPlayer.weaponEquipment[0]?.eItem.ToString();
+            saveData.ArmorEquipment = currentPlayer.armorEquipment[0]?.eItem.ToString();
 
             saveData.EquipmentInventory = new Dictionary<string, int>();
             saveData.ConsumableInventory = new Dictionary<string, int>();
