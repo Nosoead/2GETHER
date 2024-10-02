@@ -121,26 +121,52 @@ namespace _2GETHER
                 loadedData.Hp, loadedData.MaxHp, loadedData.Mp, loadedData.MaxMp, loadedData.Gold, loadedData.Exp,
                 loadedData.MaxExp, job, loadedData.Potions, loadedData.MonsterKills);
 
-            //개씹고트
-            //var butItems = currentItemManager.items.Where
-                //(item => loadedData.SoldItems.Contains(item.eItem.ToString())).ToList();
             
-            /*foreach (var item in currentItemManager.items)
+            currentPlayer.equipmentInventory.Clear();
+            currentPlayer.consumableInventory.Clear();
+
+
+            foreach (var loadItemName in loadedData.EquipmentInventory.Keys)
             {
-                if (loadedData.SoldItems.Contains (item.eItem.ToString()))
+                var item = currentItemManager.equipmentItemList.Find(x => x.eItem.ToString() == loadItemName);
+                currentPlayer.equipmentInventory.Add(item);
+
+                for (int i = 0; i < loadedData.EquipmentInventory[loadItemName]; i++)
                 {
-                    item.isPlayerBuy = true;
+                    item.AddCount();
                 }
-            }*/
+            }
 
+            var equipitems = currentPlayer.equipmentInventory.Where(x => x.eItem.ToString() ==  loadedData.WeaponEquipment).ToList();
+            foreach (var equipItem in equipitems)
+            {
+                equipItem.IsPlayerEquip = true;
+            }
 
+            foreach (var loadItemName in loadedData.ConsumableInventory.Keys)
+            {
+                var item = currentItemManager.consumableItemList.Find(x => x.eItem.ToString() == loadItemName);
+                currentPlayer.consumableInventory.Add(item);
 
-            //currentItemManager.items
+                for (int i = 0; i < loadedData.ConsumableInventory[loadItemName]; i++)
+                {
+                    item.AddCount();
+                }
+            }
+
+            foreach (Item item in currentPlayer.equipmentInventory)
+            {
+                //item.ItemCount = loadedData.EquipmentInventory[item.eItem.ToString()];
+            }
+
+            
+
+            ioManager.PrintDebugMessage("불러오기 완료");
         }
 
         public void LoadingData()
         {
-            int number = 0;
+            /*int number = 0;
             int fileSelect = -1;
 
             for (number = 0; number < FileMaxCount; number++)
@@ -158,17 +184,15 @@ namespace _2GETHER
                 }
             }
 
-            fileSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(FileLoadingMessage.ToArray(), true);
-
-            /*if (fileSelect == 0)
-            {
-                return;
-            }*/
+            fileSelect = ioManager.PrintMessageWithNumberForSelectZeroExit(FileLoadingMessage.ToArray(), true);*/
+            
             /*if (!File.Exists(saveFileName))
             {
                 ioManager.PrintDebugMessage("저장된 게임 데이터가 없습니다.");
                 return;
             }*/
+
+
         }
 
         public void SaveOrLoad()
