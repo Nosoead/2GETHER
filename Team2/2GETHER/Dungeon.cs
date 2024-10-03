@@ -228,7 +228,7 @@
             Count++;
             PrintSkillTwoMessage(player, attackedMonsters, damage, ioManager, firstHp, secondHp);
 
-            attackedMonsters.Clear();
+            //attackedMonsters.Clear();
         }
 
         private string[] GetRandomMonstersInfo(Monster monster) // 랜덤한 몬스터의 정보

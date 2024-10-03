@@ -117,6 +117,7 @@
 
         public double UseSkillTwo(List<Monster> monsters, out double firstHp, out double SecondHp)
         {
+            attackedMonster.Clear();
             if (Mp >= 15)
             {
                 Mp -= 15;
@@ -129,6 +130,7 @@
                     firstHp = liveMonsters[0].Hp;
                     SecondHp = firstHp;
                     liveMonsters[0].MonsterDamageTaken(damage);
+                    attackedMonster.Add(liveMonsters[0]);
                     return damage; 
                 }
                 else
