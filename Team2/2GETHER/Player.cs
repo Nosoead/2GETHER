@@ -115,7 +115,7 @@
             }
         }
 
-        public double UseSkillTwo(List<Monster> monsters)
+        public double UseSkillTwo(List<Monster> monsters, out double firstHp, out double SecondHp)
         {
             if (Mp >= 15)
             {
@@ -126,15 +126,16 @@
 
                 if (liveMonsters.Count == 1)
                 {
+                    firstHp = liveMonsters[0].Hp;
+                    SecondHp = firstHp;
                     liveMonsters[0].MonsterDamageTaken(damage);
-                    attackedMonster.Add(liveMonsters[0]);
-                    return damage;
+                    return damage; 
                 }
                 else
                 {
                     int firstMonster = random.Next(liveMonsters.Count);
                     int secondMonster;
-
+                    
                     do
                     {
                         secondMonster = random.Next(liveMonsters.Count);
@@ -143,17 +144,23 @@
                     Monster firstTarget = liveMonsters[firstMonster];
                     Monster secondTarget = liveMonsters[secondMonster];
 
+                    firstHp = firstTarget.Hp;
+                    SecondHp = secondTarget.Hp;
+
                     attackedMonster.Add(firstTarget);
                     attackedMonster.Add(secondTarget);
 
                     firstTarget.MonsterDamageTaken(damage);
                     secondTarget.MonsterDamageTaken(damage);
+
                     return damage;
                 }
             }
             else
             {
                 Console.WriteLine("MP가 부족합니다!");
+                firstHp = 0;
+                SecondHp = 0;
                 return 0;
             }
         }
