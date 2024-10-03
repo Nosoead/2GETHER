@@ -118,7 +118,7 @@
         {
             ioManager.PrintMessage("퀘스트 목록!\n", true);
 
-            List<QuestInfo> ongoingQuests = acceptedQuests.FindAll(q => !q.IsCompleted);
+            List<QuestInfo> ongoingQuests = acceptedQuests.FindAll(quest => !quest.IsCompleted);
 
             if (ongoingQuests.Count > 0)
             {
@@ -247,7 +247,8 @@
             acceptedQuests.Remove(quest);
 
             EquipmentItem selectItem = quest.ItemReward;
-            EquipmentItem foundItem = player.equipmentInventory.Find(item => Object.ReferenceEquals(item, selectItem));
+            EquipmentItem foundItem = player.equipmentInventory.Find(item => item.eItem == selectItem.eItem);
+            if (foundItem == null) player.equipmentInventory.Add(selectItem);
             selectItem.AddCount();
             player.AddGold(quest.GoldReward);
 
