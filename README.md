@@ -19,10 +19,31 @@
 2. Visual Studio 2022에서 솔루션 파일을 엽니다.
 3. 실행하여 게임을 시작합니다.
 
-   ## 프로젝트 소개 - 상세
+## 프로젝트 소개 - 상세
 
 ### 이번 주차에 배운 내용과의 연관성
 - 클래스, 문자열 처리, 열거, 델리게이트 등의 C# 문법 활용
 
 ### 활용 방안 및 기대 효과
 - 서로 다른 코딩 방식을 조율하고 C# 문법에 대한 이해
+
+## 와이어 프레임
+![image](https://github.com/user-attachments/assets/7f8ddcc1-3609-4452-8446-49a8763d6df5)
+
+## 팀 역할
+
+- **Kim 지훈**
+  - Player, Monster, Intro, Status, Quest
+
+- **Choi 동규**
+  - Dungeon, Battle System
+
+- **Son 대오**
+  - Item, ItemManager, Inventory, Store
+
+- **Yi 민우**
+  - GameManager, IOManager, DataManager
+
+
+
+
